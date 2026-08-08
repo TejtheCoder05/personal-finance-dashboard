@@ -1,14 +1,21 @@
 "use client";
 
-import { FormEvent, useState, useSyncExternalStore } from "react";
+import { FormEvent, useEffect, useState, useSyncExternalStore } from "react";
 
+import { useAuth } from "@/components/AuthProvider";
+import {
+  createSavingsGoal,
+  deleteSavingsGoal,
+  getSavingsGoals,
+  updateSavingsGoal,
+} from "@/lib/api";
 import {
   getServerSavingsGoals,
   loadSavingsGoals,
   saveSavingsGoals,
   subscribeToSavingsGoals,
 } from "@/lib/savingsGoals";
-import type { SavingsGoal } from "@/types/finance";
+import type { AuthUser, PersistentSavingsGoal, SavingsGoal } from "@/types/finance";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -30,18 +37,60 @@ const emptyDraft: GoalDraft = {
   targetDate: "",
 };
 
-export default function SavingsGoals() {
-  const goals = useSyncExternalStore(
+function asSavingsGoal(goal: PersistentSavingsGoal): SavingsGoal {
+  return {
+    id: goal.id,
+    name: goal.name,
+    targetAmount: Number(goal.target_amount),
+    currentAmount: Number(goal.current_amount),
+    targetDate: goal.target_date,
+  };
+}
+
+function SavingsGoalsContent({ user }: { user: AuthUser | null }) {
+  const localGoals = useSyncExternalStore(
     subscribeToSavingsGoals,
     loadSavingsGoals,
     getServerSavingsGoals,
   );
+  const [persistentGoals, setPersistentGoals] = useState<SavingsGoal[]>([]);
+  const [goalsLoading, setGoalsLoading] = useState(Boolean(user));
   const [draft, setDraft] = useState<GoalDraft>(emptyDraft);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const goals = user ? persistentGoals : localGoals;
 
-  function persist(nextGoals: SavingsGoal[]) {
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+    let active = true;
+    async function loadPersistentGoals() {
+      try {
+        const storedGoals = await getSavingsGoals();
+        if (active) {
+          setPersistentGoals(storedGoals.map(asSavingsGoal));
+          setError(null);
+        }
+      } catch {
+        if (active) {
+          setError("Your saved goals could not be loaded.");
+        }
+      } finally {
+        if (active) {
+          setGoalsLoading(false);
+        }
+      }
+    }
+    loadPersistentGoals();
+    return () => {
+      active = false;
+    };
+  }, [user]);
+
+  function persistLocally(nextGoals: SavingsGoal[]) {
     try {
       saveSavingsGoals(nextGoals);
     } catch {
@@ -56,7 +105,7 @@ export default function SavingsGoals() {
     setError(null);
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const name = draft.name.trim();
     const targetAmount = Number(draft.targetAmount);
@@ -82,12 +131,37 @@ export default function SavingsGoals() {
       currentAmount,
       targetDate: draft.targetDate || null,
     };
-    const nextGoals = editingId
-      ? goals.map((current) => (current.id === editingId ? goal : current))
-      : [...goals, goal];
-
-    persist(nextGoals);
-    resetForm();
+    setSaving(true);
+    setError(null);
+    try {
+      if (user) {
+        const payload = {
+          name,
+          target_amount: targetAmount,
+          current_amount: currentAmount,
+          target_date: draft.targetDate || null,
+        };
+        const saved = editingId
+          ? await updateSavingsGoal(editingId, payload)
+          : await createSavingsGoal(payload);
+        const savedGoal = asSavingsGoal(saved);
+        setPersistentGoals((current) =>
+          editingId
+            ? current.map((item) => (item.id === editingId ? savedGoal : item))
+            : [savedGoal, ...current],
+        );
+      } else {
+        const nextGoals = editingId
+          ? goals.map((current) => (current.id === editingId ? goal : current))
+          : [...goals, goal];
+        persistLocally(nextGoals);
+      }
+      resetForm();
+    } catch {
+      setError("The savings goal could not be saved. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   function startEditing(goal: SavingsGoal) {
@@ -102,10 +176,20 @@ export default function SavingsGoals() {
     setError(null);
   }
 
-  function deleteGoal(goalId: string) {
-    persist(goals.filter((goal) => goal.id !== goalId));
-    if (editingId === goalId) {
-      resetForm();
+  async function deleteGoal(goalId: string) {
+    setError(null);
+    try {
+      if (user) {
+        await deleteSavingsGoal(goalId);
+        setPersistentGoals((current) => current.filter((goal) => goal.id !== goalId));
+      } else {
+        persistLocally(goals.filter((goal) => goal.id !== goalId));
+      }
+      if (editingId === goalId) {
+        resetForm();
+      }
+    } catch {
+      setError("The savings goal could not be deleted. Please try again.");
     }
   }
 
@@ -187,16 +271,21 @@ export default function SavingsGoals() {
           <div className="mt-4 flex justify-end">
             <button
               type="submit"
-              className="rounded-lg bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-700"
+              disabled={saving}
+              className="rounded-lg bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {editingId ? "Save changes" : "Create goal"}
+              {saving ? "Saving..." : editingId ? "Save changes" : "Create goal"}
             </button>
           </div>
         </form>
       )}
 
       <div className="mt-6">
-        {goals.length === 0 ? (
+        {goalsLoading ? (
+          <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 px-5 py-10 text-center">
+            <p className="text-sm font-medium text-gray-700">Loading your savings goals...</p>
+          </div>
+        ) : goals.length === 0 ? (
           <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 px-5 py-10 text-center">
             <p className="text-sm font-medium text-gray-700">No savings goals yet</p>
             <p className="mt-1 text-xs text-gray-400">Add a goal to start tracking your progress.</p>
@@ -244,9 +333,23 @@ export default function SavingsGoals() {
         )}
       </div>
 
+      {error && !formOpen && <p role="alert" className="mt-4 text-sm text-red-600">{error}</p>}
+
       <p className="mt-4 text-xs text-gray-400">
-        Goals are saved only in this browser and are separate from transaction data.
+        {user
+          ? "Goals are securely saved to your FinanceIQ account."
+          : "Goals are saved only in this browser. Sign in to use separate account goals."}
       </p>
     </section>
   );
+}
+
+export default function SavingsGoals() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return null;
+  }
+
+  return <SavingsGoalsContent key={user?.id ?? "anonymous"} user={user} />;
 }

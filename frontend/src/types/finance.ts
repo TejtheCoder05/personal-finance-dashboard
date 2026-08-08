@@ -97,6 +97,25 @@ export interface SavingsGoal {
   targetDate: string | null;
 }
 
+export interface PersistentSavingsGoal {
+  id: string;
+  name: string;
+  target_amount: string;
+  current_amount: string;
+  target_date: string | null;
+  created_at: string;
+  updated_at: string;
+  percent_complete: string;
+  remaining_amount: string;
+}
+
+export interface SavingsGoalPayload {
+  name: string;
+  target_amount: number;
+  current_amount: number;
+  target_date: string | null;
+}
+
 export interface AuthUser {
   id: string;
   email: string;

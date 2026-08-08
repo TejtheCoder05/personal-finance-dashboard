@@ -10,6 +10,8 @@ import type {
   CsvValidationResult,
   ImportResult,
   AuthUser,
+  PersistentSavingsGoal,
+  SavingsGoalPayload,
 } from "@/types/finance";
 
 const API_BASE_URL =
@@ -204,5 +206,53 @@ export async function logoutUser(): Promise<void> {
   });
   if (!response.ok) {
     throw await responseError(response, "Could not log out.");
+  }
+}
+
+export function getSavingsGoals(): Promise<PersistentSavingsGoal[]> {
+  return fetchApi<PersistentSavingsGoal[]>("/api/goals");
+}
+
+export async function createSavingsGoal(
+  goal: SavingsGoalPayload,
+): Promise<PersistentSavingsGoal> {
+  const response = await fetch(`${API_BASE_URL}/api/goals`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(goal),
+  });
+  if (!response.ok) {
+    throw await responseError(response, "Could not create the savings goal.");
+  }
+  return response.json();
+}
+
+export async function updateSavingsGoal(
+  goalId: string,
+  goal: SavingsGoalPayload,
+): Promise<PersistentSavingsGoal> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/goals/${encodeURIComponent(goalId)}`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(goal),
+    },
+  );
+  if (!response.ok) {
+    throw await responseError(response, "Could not update the savings goal.");
+  }
+  return response.json();
+}
+
+export async function deleteSavingsGoal(goalId: string): Promise<void> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/goals/${encodeURIComponent(goalId)}`,
+    { method: "DELETE", credentials: "include" },
+  );
+  if (!response.ok) {
+    throw await responseError(response, "Could not delete the savings goal.");
   }
 }
