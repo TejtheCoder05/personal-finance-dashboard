@@ -1,20 +1,39 @@
 from pathlib import Path
+from typing import Annotated
 import json
 
 import pandas as pd
 
-from fastapi import FastAPI, File, Form, HTTPException, Query, Response, UploadFile
+from fastapi import (
+    Depends,
+    FastAPI,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    Response,
+    UploadFile,
+)
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
+from backend.analytics.spending import build_spending_analytics
 from backend.api.imports import (
     ImportValidationError,
     delete_imported_dataset,
+    enrich_transactions,
     get_imported_dataset,
     inspect_transaction_csv,
+    parse_transaction_csv,
     process_upload,
 )
+from backend.auth.dependencies import CurrentUser, OptionalUser
 from backend.auth.router import router as auth_router
 from backend.api.goals import router as goals_router
+from backend.db import finance_store
+from backend.db.database import get_db, get_optional_db
+from backend.db.models import TransactionDataset, User
 
 
 # ---------------------------------------------------------
@@ -169,6 +188,69 @@ def dataframe_records(df: pd.DataFrame):
 
 
 # ---------------------------------------------------------
+# Request data source resolution
+# ---------------------------------------------------------
+
+OptionalDbSession = Annotated[Session | None, Depends(get_optional_db)]
+
+
+class ResolvedSource:
+    """Transactions for one request, with analytics computed only when needed."""
+
+    def __init__(self, transactions: pd.DataFrame, analytics: dict | None = None):
+        self.transactions = transactions
+        self._analytics = analytics
+
+    @property
+    def analytics(self) -> dict:
+        if self._analytics is None:
+            self._analytics = build_spending_analytics(self.transactions)
+        return self._analytics
+
+
+def resolve_source(
+    user: User | None,
+    dataset_id: str | None,
+    db: Session | None,
+) -> ResolvedSource | None:
+    """Resolve the dataset a request should read, or None for the demo dataset.
+
+    Signed-in requests are answered from PostgreSQL and are always filtered by
+    the authenticated user's id, so a dataset identifier alone never exposes
+    another account's transactions.
+    """
+
+    if user is not None and db is not None:
+        dataset = (
+            finance_store.get_dataset(db, user.id, dataset_id)
+            if dataset_id
+            else finance_store.get_active_dataset(db, user.id)
+        )
+        if dataset is not None:
+            return ResolvedSource(
+                finance_store.load_transactions_frame(db, user.id, dataset.id)
+            )
+
+    if dataset_id:
+        temporary = get_dataset_or_404(dataset_id)
+        return ResolvedSource(temporary.transactions, temporary.analytics)
+    return None
+
+
+def dataset_payload(dataset: TransactionDataset) -> dict:
+    return {
+        "dataset_id": str(dataset.id),
+        "filename": dataset.original_filename,
+        "transaction_count": dataset.transaction_count,
+        "column_mapping": dataset.column_mapping,
+        "amount_sign": dataset.amount_sign,
+        "is_active": dataset.is_active,
+        "created_at": dataset.created_at.isoformat(),
+        "storage": "account",
+    }
+
+
+# ---------------------------------------------------------
 # Root
 # ---------------------------------------------------------
 
@@ -227,13 +309,18 @@ def health():
 # ---------------------------------------------------------
 
 @app.get("/api/summary")
-def get_summary(dataset_id: str | None = None):
+def get_summary(
+    user: OptionalUser,
+    db: OptionalDbSession,
+    dataset_id: str | None = None,
+):
     """
     Return headline spending statistics.
     """
 
-    if dataset_id:
-        return get_dataset_or_404(dataset_id).analytics["summary"]
+    source = resolve_source(user, dataset_id, db)
+    if source is not None:
+        return source.analytics["summary"]
     return load_json_file(
         SUMMARY_FILE
     )
@@ -244,15 +331,18 @@ def get_summary(dataset_id: str | None = None):
 # ---------------------------------------------------------
 
 @app.get("/api/monthly")
-def get_monthly_spending(dataset_id: str | None = None):
+def get_monthly_spending(
+    user: OptionalUser,
+    db: OptionalDbSession,
+    dataset_id: str | None = None,
+):
     """
     Return monthly spending and month-over-month changes.
     """
 
-    if dataset_id:
-        return dataframe_records(
-            get_dataset_or_404(dataset_id).analytics["monthly"]
-        )
+    source = resolve_source(user, dataset_id, db)
+    if source is not None:
+        return dataframe_records(source.analytics["monthly"])
     return load_csv_file(
         MONTHLY_FILE
     )
@@ -263,15 +353,18 @@ def get_monthly_spending(dataset_id: str | None = None):
 # ---------------------------------------------------------
 
 @app.get("/api/categories")
-def get_category_spending(dataset_id: str | None = None):
+def get_category_spending(
+    user: OptionalUser,
+    db: OptionalDbSession,
+    dataset_id: str | None = None,
+):
     """
     Return spending grouped by category.
     """
 
-    if dataset_id:
-        return dataframe_records(
-            get_dataset_or_404(dataset_id).analytics["category"]
-        )
+    source = resolve_source(user, dataset_id, db)
+    if source is not None:
+        return dataframe_records(source.analytics["category"])
     return load_csv_file(
         CATEGORY_FILE
     )
@@ -283,6 +376,8 @@ def get_category_spending(dataset_id: str | None = None):
 
 @app.get("/api/merchants")
 def get_merchants(
+    user: OptionalUser,
+    db: OptionalDbSession,
     limit: int = Query(
         default=10,
         ge=1,
@@ -294,10 +389,9 @@ def get_merchants(
     Return merchants ranked by total spending.
     """
 
-    if dataset_id:
-        records = dataframe_records(
-            get_dataset_or_404(dataset_id).analytics["merchant"]
-        )
+    source = resolve_source(user, dataset_id, db)
+    if source is not None:
+        records = dataframe_records(source.analytics["merchant"])
     else:
         records = load_csv_file(MERCHANT_FILE)
 
@@ -309,15 +403,18 @@ def get_merchants(
 # ---------------------------------------------------------
 
 @app.get("/api/anomalies")
-def get_anomalies(dataset_id: str | None = None):
+def get_anomalies(
+    user: OptionalUser,
+    db: OptionalDbSession,
+    dataset_id: str | None = None,
+):
     """
     Return transactions flagged as anomalies.
     """
 
-    if dataset_id:
-        return dataframe_records(
-            get_dataset_or_404(dataset_id).analytics["anomalies"]
-        )
+    source = resolve_source(user, dataset_id, db)
+    if source is not None:
+        return dataframe_records(source.analytics["anomalies"])
     return load_csv_file(
         ANOMALY_FILE
     )
@@ -329,6 +426,8 @@ def get_anomalies(dataset_id: str | None = None):
 
 @app.get("/api/transactions")
 def get_transactions(
+    user: OptionalUser,
+    db: OptionalDbSession,
     limit: int = Query(
         default=50,
         ge=1,
@@ -342,8 +441,10 @@ def get_transactions(
     Return transactions with optional filters.
     """
 
-    if dataset_id:
-        df = get_dataset_or_404(dataset_id).transactions.copy()
+    source = resolve_source(user, dataset_id, db)
+
+    if source is not None:
+        df = source.transactions.copy()
     elif not TRANSACTIONS_FILE.exists():
         raise HTTPException(
             status_code=404,
@@ -417,13 +518,20 @@ def get_transactions(
 
 @app.post("/api/imports", status_code=201)
 async def import_transactions(
+    response: Response,
+    user: OptionalUser,
+    db: OptionalDbSession,
     file: UploadFile = File(...),
     amount_sign: str | None = Form(default=None),
     date_column: str | None = Form(default=None),
     description_column: str | None = Form(default=None),
     amount_column: str | None = Form(default=None),
 ):
-    """Validate and temporarily process a bank transaction CSV."""
+    """Process a bank transaction CSV.
+
+    Signed-in uploads are persisted to the authenticated account; anonymous
+    demo uploads stay in temporary backend memory.
+    """
 
     filename = file.filename or "transactions.csv"
     if not filename.lower().endswith(".csv"):
@@ -431,15 +539,54 @@ async def import_transactions(
 
     content = await file.read()
     await file.close()
+
+    if user is None or db is None:
+        try:
+            dataset, mapping = process_upload(
+                content,
+                filename=filename,
+                amount_sign=amount_sign,
+                date_column=date_column,
+                description_column=description_column,
+                amount_column=amount_column,
+            )
+        except ImportValidationError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        except (FileNotFoundError, OSError) as exc:
+            raise HTTPException(
+                status_code=503,
+                detail="A required saved ML model is unavailable.",
+            ) from exc
+
+        return {
+            "dataset_id": dataset.dataset_id,
+            "filename": dataset.filename,
+            "transaction_count": len(dataset.transactions),
+            "column_mapping": mapping,
+            "storage": "temporary",
+        }
+
     try:
-        dataset, mapping = process_upload(
+        canonical, mapping = parse_transaction_csv(
             content,
-            filename=filename,
             amount_sign=amount_sign,
             date_column=date_column,
             description_column=description_column,
             amount_column=amount_column,
         )
+    except ImportValidationError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    # Re-uploading an identical CSV reactivates the stored import instead of
+    # duplicating every transaction in the account.
+    content_hash = finance_store.dataset_fingerprint(content, mapping, amount_sign)
+    existing = finance_store.find_dataset_by_hash(db, user.id, content_hash)
+    if existing is not None:
+        response.status_code = 200
+        return dataset_payload(finance_store.activate_dataset(db, existing))
+
+    try:
+        transactions = enrich_transactions(canonical)
     except ImportValidationError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except (FileNotFoundError, OSError) as exc:
@@ -448,13 +595,39 @@ async def import_transactions(
             detail="A required saved ML model is unavailable.",
         ) from exc
 
-    return {
-        "dataset_id": dataset.dataset_id,
-        "filename": dataset.filename,
-        "transaction_count": len(dataset.transactions),
-        "column_mapping": mapping,
-        "storage": "temporary",
-    }
+    try:
+        dataset = finance_store.save_dataset(
+            db,
+            user.id,
+            filename=filename,
+            transactions=transactions,
+            column_mapping=mapping,
+            amount_sign=amount_sign,
+            content_hash=content_hash,
+        )
+    except IntegrityError:
+        # A concurrent identical upload won the race; reuse what it stored.
+        db.rollback()
+        existing = finance_store.find_dataset_by_hash(db, user.id, content_hash)
+        if existing is None:
+            raise
+        response.status_code = 200
+        return dataset_payload(finance_store.activate_dataset(db, existing))
+
+    return dataset_payload(dataset)
+
+
+@app.get("/api/imports")
+def list_transaction_imports(
+    current_user: CurrentUser,
+    db: Annotated[Session, Depends(get_db)],
+):
+    """List the authenticated user's stored imports, newest first."""
+
+    return [
+        dataset_payload(dataset)
+        for dataset in finance_store.list_datasets(db, current_user.id)
+    ]
 
 
 @app.post("/api/imports/validate")
@@ -476,9 +649,17 @@ async def validate_transaction_import(file: UploadFile = File(...)):
 
 
 @app.delete("/api/imports/{dataset_id}", status_code=204)
-def delete_transaction_import(dataset_id: str):
-    """Permanently clear a temporary uploaded dataset from memory."""
+def delete_transaction_import(
+    dataset_id: str,
+    user: OptionalUser,
+    db: OptionalDbSession,
+):
+    """Permanently remove an imported dataset and its stored transactions."""
 
-    if not delete_imported_dataset(dataset_id):
-        raise HTTPException(status_code=404, detail="Uploaded dataset not found.")
-    return Response(status_code=204)
+    if user is not None and db is not None:
+        if finance_store.delete_dataset(db, user.id, dataset_id):
+            return Response(status_code=204)
+
+    if delete_imported_dataset(dataset_id):
+        return Response(status_code=204)
+    raise HTTPException(status_code=404, detail="Uploaded dataset not found.")

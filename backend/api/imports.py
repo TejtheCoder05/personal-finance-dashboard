@@ -223,22 +223,9 @@ def parse_transaction_csv(
     return canonical, mapping
 
 
-def process_upload(
-    content: bytes,
-    *,
-    filename: str,
-    amount_sign: str | None,
-    date_column: str | None = None,
-    description_column: str | None = None,
-    amount_column: str | None = None,
-) -> tuple[ImportedDataset, dict[str, str]]:
-    canonical, mapping = parse_transaction_csv(
-        content,
-        amount_sign=amount_sign,
-        date_column=date_column,
-        description_column=description_column,
-        amount_column=amount_column,
-    )
+def enrich_transactions(canonical: pd.DataFrame) -> pd.DataFrame:
+    """Clean canonical rows, then apply the saved categorization and anomaly models."""
+
     cleaned = clean_transactions(canonical)
     if cleaned.empty:
         raise ImportValidationError(
@@ -250,7 +237,47 @@ def process_upload(
     categorized = predict_categories(cleaned, classifier, encoder)
 
     anomaly_model = joblib.load(MODEL_FILE)
-    transactions = predict_anomalies(categorized, anomaly_model)
+    return predict_anomalies(categorized, anomaly_model)
+
+
+def process_transactions(
+    content: bytes,
+    *,
+    amount_sign: str | None,
+    date_column: str | None = None,
+    description_column: str | None = None,
+    amount_column: str | None = None,
+) -> tuple[pd.DataFrame, dict[str, str]]:
+    """Clean, categorize, and score an uploaded CSV without storing anything."""
+
+    canonical, mapping = parse_transaction_csv(
+        content,
+        amount_sign=amount_sign,
+        date_column=date_column,
+        description_column=description_column,
+        amount_column=amount_column,
+    )
+    return enrich_transactions(canonical), mapping
+
+
+def process_upload(
+    content: bytes,
+    *,
+    filename: str,
+    amount_sign: str | None,
+    date_column: str | None = None,
+    description_column: str | None = None,
+    amount_column: str | None = None,
+) -> tuple[ImportedDataset, dict[str, str]]:
+    """Process an anonymous upload into the temporary in-memory demo store."""
+
+    transactions, mapping = process_transactions(
+        content,
+        amount_sign=amount_sign,
+        date_column=date_column,
+        description_column=description_column,
+        amount_column=amount_column,
+    )
     analytics = build_spending_analytics(transactions)
 
     dataset = ImportedDataset(

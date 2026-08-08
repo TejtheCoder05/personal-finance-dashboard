@@ -70,6 +70,9 @@ class TransactionDataset(Base):
     __tablename__ = "transaction_datasets"
     __table_args__ = (
         UniqueConstraint("id", "user_id", name="uq_transaction_datasets_id_user"),
+        UniqueConstraint(
+            "user_id", "content_hash", name="uq_transaction_datasets_user_content"
+        ),
         Index("ix_transaction_datasets_user_created", "user_id", "created_at"),
         Index(
             "uq_transaction_datasets_active_user",
@@ -91,6 +94,7 @@ class TransactionDataset(Base):
     transaction_count: Mapped[int] = mapped_column(Integer, nullable=False)
     column_mapping: Mapped[dict] = mapped_column(JSONB, nullable=False)
     amount_sign: Mapped[str] = mapped_column(String(32), nullable=False)
+    content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     is_active: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default=text("false")
     )

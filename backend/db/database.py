@@ -3,7 +3,9 @@ from __future__ import annotations
 import os
 from collections.abc import Generator
 from functools import lru_cache
+from typing import Annotated
 
+from fastapi import Depends
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
@@ -51,11 +53,32 @@ def get_session_factory() -> sessionmaker[Session]:
     )
 
 
-def get_db() -> Generator[Session, None, None]:
-    """Provide a transaction-safe FastAPI database session dependency."""
+def get_optional_db() -> Generator[Session | None, None, None]:
+    """Yield a session, or None when no database is configured.
 
-    session = get_session_factory()()
+    Endpoints that also serve the anonymous demo depend on this so a
+    demo-only deployment keeps working without PostgreSQL.
+    """
+
+    try:
+        session = get_session_factory()()
+    except RuntimeError:
+        yield None
+        return
     try:
         yield session
     finally:
         session.close()
+
+
+def get_db(
+    session: Annotated[Session | None, Depends(get_optional_db)],
+) -> Session:
+    """Provide a required, transaction-safe FastAPI database session."""
+
+    if session is None:
+        raise RuntimeError(
+            "DATABASE_URL is not configured. Copy .env.example to .env and "
+            "export DATABASE_URL before using database-backed features."
+        )
+    return session
