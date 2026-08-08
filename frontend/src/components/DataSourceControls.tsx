@@ -2,6 +2,7 @@
 
 import { FormEvent, useRef, useState } from "react";
 
+import { useAuth } from "@/components/AuthProvider";
 import { useDataSource } from "@/components/DataSourceProvider";
 import {
   deleteImportedDataset,
@@ -21,7 +22,10 @@ const emptyMapping: CsvColumnMapping = {
 };
 
 export default function DataSourceControls() {
-  const { dataset, activateDataset, activateDemo } = useDataSource();
+  const { user } = useAuth();
+  const { dataset, restoring, activateDataset, activateDemo, refreshStoredDataset } =
+    useDataSource();
+  const persisted = dataset?.storage === "account";
   const fileInput = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [inspection, setInspection] = useState<CsvValidationResult | null>(null);
@@ -103,11 +107,25 @@ export default function DataSourceControls() {
       return;
     }
 
+    if (
+      persisted &&
+      !window.confirm(
+        `Permanently delete ${dataset.filename} and its ${dataset.transaction_count} saved transactions?`,
+      )
+    ) {
+      return;
+    }
+
     try {
       setRemoving(true);
       setError(null);
       await deleteImportedDataset(dataset.dataset_id);
-      activateDemo();
+      if (persisted) {
+        // An earlier import, if any, becomes active again.
+        await refreshStoredDataset();
+      } else {
+        activateDemo();
+      }
       resetUpload();
     } catch (removeError) {
       setError(
@@ -127,7 +145,13 @@ export default function DataSourceControls() {
           <div className="flex items-center gap-2">
             <span className={`h-2.5 w-2.5 rounded-full ${dataset ? "bg-blue-500" : "bg-emerald-500"}`} />
             <p className="text-sm font-semibold text-gray-900">
-              {dataset ? "Your uploaded data" : "Demo Mode"}
+              {restoring
+                ? "Loading your saved data…"
+                : persisted
+                  ? "Your saved account data"
+                  : dataset
+                    ? "Your uploaded data"
+                    : "Demo Mode"}
             </p>
           </div>
           <p className="mt-1 text-xs leading-5 text-gray-500">
@@ -165,7 +189,11 @@ export default function DataSourceControls() {
                 disabled={removing}
                 className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
               >
-                {removing ? "Removing…" : "Remove & use Demo"}
+                {removing
+                  ? "Removing…"
+                  : persisted
+                    ? "Delete saved data"
+                    : "Remove & use Demo"}
               </button>
             )}
           </div>
@@ -252,7 +280,11 @@ export default function DataSourceControls() {
 
       <div className="mt-3 flex flex-col gap-1 border-t border-gray-100 pt-3 text-xs text-gray-400 sm:flex-row sm:items-center sm:justify-between">
         <p>CSV only · 5 MB maximum · up to 10,000 transactions</p>
-        <p>Uploads are temporary and never retrain the ML models.</p>
+        <p>
+          {user
+            ? "Imports are saved to your account and never retrain the ML models."
+            : "Uploads are temporary. Sign in to keep imported transactions."}
+        </p>
       </div>
 
       {error && (

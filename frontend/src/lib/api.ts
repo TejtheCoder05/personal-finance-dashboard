@@ -12,6 +12,7 @@ import type {
   AuthUser,
   PersistentSavingsGoal,
   SavingsGoalPayload,
+  StoredDataset,
 } from "@/types/finance";
 
 const API_BASE_URL =
@@ -156,6 +157,10 @@ export async function validateTransactionCsv(
   }
 
   return response.json();
+}
+
+export function getStoredDatasets(): Promise<StoredDataset[]> {
+  return fetchApi<StoredDataset[]>("/api/imports");
 }
 
 export async function deleteImportedDataset(datasetId: string): Promise<void> {

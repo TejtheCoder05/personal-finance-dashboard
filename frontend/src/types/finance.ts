@@ -81,12 +81,25 @@ export interface CsvValidationResult {
   warnings: string[];
 }
 
+/**
+ * "temporary" datasets live in backend memory for the anonymous demo.
+ * "account" datasets are persisted to PostgreSQL for the signed-in user.
+ */
+export type DatasetStorage = "temporary" | "account";
+
 export interface ImportResult {
   dataset_id: string;
   filename: string;
   transaction_count: number;
   column_mapping: CsvColumnMapping;
-  storage: "temporary";
+  storage: DatasetStorage;
+}
+
+export interface StoredDataset extends ImportResult {
+  storage: "account";
+  amount_sign: AmountSign;
+  is_active: boolean;
+  created_at: string;
 }
 
 export interface SavingsGoal {
