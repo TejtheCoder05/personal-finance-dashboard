@@ -88,7 +88,8 @@ The responsive dashboard includes:
 * CSV upload with explicit purchase-sign handling
 * CSV validation, row preview, and column mapping
 * Demo Mode and uploaded-data switching
-* Locally persisted savings goals with progress tracking
+* Account-persisted CSV imports that survive refresh, sign-out, and restarts
+* Savings goals with progress tracking, persisted per account when signed in
 * Loading states
 * API error states
 
@@ -175,7 +176,14 @@ personal-finance-dashboard/
 │   ├── analytics/
 │   │   └── spending.py
 │   ├── api/
+│   │   ├── goals.py
+│   │   ├── imports.py
 │   │   └── main.py
+│   ├── auth/
+│   │   ├── dependencies.py
+│   │   ├── router.py
+│   │   ├── schemas.py
+│   │   └── security.py
 │   ├── data/
 │   │   ├── analytics/
 │   │   ├── processed/
@@ -195,12 +203,17 @@ personal-finance-dashboard/
 │   │   └── category_classifier_metadata.json
 │   ├── db/
 │   │   ├── database.py
+│   │   ├── finance_store.py
 │   │   ├── models.py
 │   │   └── migrations/
-│   └── pipeline/
-│       ├── clean.py
-│       ├── ingest.py
-│       └── merchant.py
+│   ├── pipeline/
+│   │   ├── clean.py
+│   │   ├── ingest.py
+│   │   └── merchant.py
+│   └── tests/
+│       ├── test_auth.py
+│       ├── test_goals.py
+│       └── test_imports.py
 ├── frontend/
 │   ├── src/
 │   │   ├── app/
@@ -275,12 +288,18 @@ The FastAPI backend exposes the following endpoints:
 | GET    | `/api/merchants`    | Merchant spending        |
 | GET    | `/api/anomalies`    | Detected anomalies       |
 | GET    | `/api/transactions` | Transaction records      |
-| POST   | `/api/imports`      | Import a temporary CSV   |
+| POST   | `/api/imports`      | Import a CSV             |
+| GET    | `/api/imports`      | List the account's stored imports |
 | POST   | `/api/imports/validate` | Preview and map a CSV |
-| DELETE | `/api/imports/{dataset_id}` | Remove temporary data |
+| DELETE | `/api/imports/{dataset_id}` | Remove an imported dataset |
 | POST   | `/api/auth/register` | Create a user account |
 | POST   | `/api/auth/login` | Issue a JWT access token |
+| POST   | `/api/auth/logout` | Clear the session cookie |
 | GET    | `/api/auth/me` | Return the authenticated user |
+| GET    | `/api/goals` | List the account's savings goals |
+| POST   | `/api/goals` | Create a savings goal |
+| PATCH  | `/api/goals/{goal_id}` | Update a savings goal |
+| DELETE | `/api/goals/{goal_id}` | Delete a savings goal |
 
 The transaction endpoint supports:
 
@@ -290,9 +309,22 @@ The transaction endpoint supports:
 * `dataset_id` (optional; defaults to Demo Mode when omitted)
 
 The analytics endpoints also accept an optional `dataset_id` returned by
-`POST /api/imports`. Imported data is held in backend memory and disappears
-when the backend restarts; it never replaces the synthetic demo, training, or
-holdout datasets.
+`POST /api/imports`. Imported data never replaces the synthetic demo,
+training, or holdout datasets.
+
+How a request is resolved depends on the caller:
+
+* **Signed in** — the import is processed by the same cleaning, categorization,
+  and anomaly pipeline and then persisted to PostgreSQL against the
+  authenticated user. Analytics requests without a `dataset_id` return that
+  user's active import, and every query is filtered by the user id resolved
+  server-side, so a `dataset_id` alone can never reach another account. Users
+  with no stored import continue to see the demo dataset.
+* **Signed out** — the import is held in backend memory for the demo session
+  and disappears when the backend restarts.
+
+Re-uploading a byte-identical CSV with the same column mapping reactivates the
+stored import instead of duplicating its transactions.
 
 CSV imports accept a multipart `file` field and an optional `amount_sign` form
 field. Files with an `Amount` column must explicitly use `purchase_positive`
@@ -506,8 +538,11 @@ The current frontend passes:
 
 ```bash
 python -m pip check
-python -m unittest backend.tests.test_auth -v
+python -m unittest discover -s backend/tests -t . -v
 ```
+
+The database-backed tests are skipped unless `DATABASE_URL` is exported, and
+they create and remove their own temporary accounts.
 
 ---
 
@@ -535,9 +570,8 @@ The anomaly model was not further tuned using its holdout results.
 
 * The current datasets are synthetic rather than real bank transactions.
 * Category-classification evaluation uses a controlled merchant catalog.
-* CSV uploads are temporary and are not persisted across backend restarts.
+* Anonymous demo uploads are temporary; only signed-in imports are persisted.
 * The application does not currently connect directly to financial institutions.
-* Frontend authentication and persistent per-user finance data are not implemented.
 * Model behavior has not yet been evaluated on large-scale real-world transaction data.
 
 ---
@@ -547,9 +581,6 @@ The anomaly model was not further tuned using its holdout results.
 Potential extensions include:
 
 * Plaid or another financial-data integration
-* PostgreSQL persistence
-* User authentication
-* Multi-user accounts
 * Recurring subscription detection
 * Budget creation and tracking
 * Spending forecasts
