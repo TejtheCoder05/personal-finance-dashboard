@@ -3,8 +3,14 @@ import json
 
 import pandas as pd
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+
+from backend.api.imports import (
+    ImportValidationError,
+    get_imported_dataset,
+    process_upload,
+)
 
 
 # ---------------------------------------------------------
@@ -138,6 +144,23 @@ def load_csv_file(path: Path):
     )
 
 
+def get_dataset_or_404(dataset_id: str):
+    dataset = get_imported_dataset(dataset_id)
+    if dataset is None:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "Uploaded dataset not found. It may have expired because "
+                "the backend restarted."
+            ),
+        )
+    return dataset
+
+
+def dataframe_records(df: pd.DataFrame):
+    return json.loads(df.to_json(orient="records", date_format="iso"))
+
+
 # ---------------------------------------------------------
 # Root
 # ---------------------------------------------------------
@@ -197,11 +220,13 @@ def health():
 # ---------------------------------------------------------
 
 @app.get("/api/summary")
-def get_summary():
+def get_summary(dataset_id: str | None = None):
     """
     Return headline spending statistics.
     """
 
+    if dataset_id:
+        return get_dataset_or_404(dataset_id).analytics["summary"]
     return load_json_file(
         SUMMARY_FILE
     )
@@ -212,11 +237,15 @@ def get_summary():
 # ---------------------------------------------------------
 
 @app.get("/api/monthly")
-def get_monthly_spending():
+def get_monthly_spending(dataset_id: str | None = None):
     """
     Return monthly spending and month-over-month changes.
     """
 
+    if dataset_id:
+        return dataframe_records(
+            get_dataset_or_404(dataset_id).analytics["monthly"]
+        )
     return load_csv_file(
         MONTHLY_FILE
     )
@@ -227,11 +256,15 @@ def get_monthly_spending():
 # ---------------------------------------------------------
 
 @app.get("/api/categories")
-def get_category_spending():
+def get_category_spending(dataset_id: str | None = None):
     """
     Return spending grouped by category.
     """
 
+    if dataset_id:
+        return dataframe_records(
+            get_dataset_or_404(dataset_id).analytics["category"]
+        )
     return load_csv_file(
         CATEGORY_FILE
     )
@@ -248,14 +281,18 @@ def get_merchants(
         ge=1,
         le=100,
     ),
+    dataset_id: str | None = None,
 ):
     """
     Return merchants ranked by total spending.
     """
 
-    records = load_csv_file(
-        MERCHANT_FILE
-    )
+    if dataset_id:
+        records = dataframe_records(
+            get_dataset_or_404(dataset_id).analytics["merchant"]
+        )
+    else:
+        records = load_csv_file(MERCHANT_FILE)
 
     return records[:limit]
 
@@ -265,11 +302,15 @@ def get_merchants(
 # ---------------------------------------------------------
 
 @app.get("/api/anomalies")
-def get_anomalies():
+def get_anomalies(dataset_id: str | None = None):
     """
     Return transactions flagged as anomalies.
     """
 
+    if dataset_id:
+        return dataframe_records(
+            get_dataset_or_404(dataset_id).analytics["anomalies"]
+        )
     return load_csv_file(
         ANOMALY_FILE
     )
@@ -288,20 +329,22 @@ def get_transactions(
     ),
     category: str | None = None,
     anomalies_only: bool = False,
+    dataset_id: str | None = None,
 ):
     """
     Return transactions with optional filters.
     """
 
-    if not TRANSACTIONS_FILE.exists():
+    if dataset_id:
+        df = get_dataset_or_404(dataset_id).transactions.copy()
+    elif not TRANSACTIONS_FILE.exists():
         raise HTTPException(
             status_code=404,
             detail="Transaction data not found.",
         )
 
-    df = pd.read_csv(
-        TRANSACTIONS_FILE
-    )
+    else:
+        df = pd.read_csv(TRANSACTIONS_FILE)
 
     # -----------------------------------------------------
     # Filter by category
@@ -363,3 +406,39 @@ def get_transactions(
             date_format="iso",
         )
     )
+
+
+@app.post("/api/imports", status_code=201)
+async def import_transactions(
+    file: UploadFile = File(...),
+    amount_sign: str | None = Form(default=None),
+):
+    """Validate and temporarily process a bank transaction CSV."""
+
+    filename = file.filename or "transactions.csv"
+    if not filename.lower().endswith(".csv"):
+        raise HTTPException(status_code=415, detail="Only .csv files are supported.")
+
+    content = await file.read()
+    await file.close()
+    try:
+        dataset, mapping = process_upload(
+            content,
+            filename=filename,
+            amount_sign=amount_sign,
+        )
+    except ImportValidationError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except (FileNotFoundError, OSError) as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="A required saved ML model is unavailable.",
+        ) from exc
+
+    return {
+        "dataset_id": dataset.dataset_id,
+        "filename": dataset.filename,
+        "transaction_count": len(dataset.transactions),
+        "column_mapping": mapping,
+        "storage": "temporary",
+    }

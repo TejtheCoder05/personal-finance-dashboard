@@ -259,12 +259,24 @@ The FastAPI backend exposes the following endpoints:
 | GET    | `/api/merchants`    | Merchant spending        |
 | GET    | `/api/anomalies`    | Detected anomalies       |
 | GET    | `/api/transactions` | Transaction records      |
+| POST   | `/api/imports`      | Import a temporary CSV   |
 
 The transaction endpoint supports:
 
 * `limit`
 * `category`
 * `anomalies_only`
+* `dataset_id` (optional; defaults to Demo Mode when omitted)
+
+The analytics endpoints also accept an optional `dataset_id` returned by
+`POST /api/imports`. Imported data is held in backend memory and disappears
+when the backend restarts; it never replaces the synthetic demo, training, or
+holdout datasets.
+
+CSV imports accept a multipart `file` field and an optional `amount_sign` form
+field. Files with an `Amount` column must explicitly use `purchase_positive`
+or `purchase_negative`, since bank sign conventions differ. `Debit` and
+`Debit Amount` columns are treated as positive purchases.
 
 FastAPI also provides interactive Swagger documentation while the backend is running.
 
@@ -450,6 +462,7 @@ The anomaly model was not further tuned using its holdout results.
 
 * The current datasets are synthetic rather than real bank transactions.
 * Category-classification evaluation uses a controlled merchant catalog.
+* CSV uploads are temporary and are not persisted across backend restarts.
 * The application does not currently connect directly to financial institutions.
 * Authentication and multi-user account support are not implemented.
 * Model behavior has not yet been evaluated on large-scale real-world transaction data.

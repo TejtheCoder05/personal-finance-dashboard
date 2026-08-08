@@ -519,6 +519,45 @@ def detect_anomalies(df):
         category_col,
     )
 
+
+def predict_anomalies(df, model):
+    """Run anomaly inference with an already-trained model."""
+
+    (
+        work,
+        features,
+        feature_columns,
+        _,
+        _,
+    ) = build_anomaly_features(df)
+
+    predictions = model.predict(features)
+    decision_scores = model.decision_function(features)
+
+    work["is_anomaly_candidate"] = predictions == -1
+    work["is_anomaly"] = (
+        work["is_anomaly_candidate"]
+        & (work["merchant_amount_ratio"] >= 2.0)
+    )
+
+    raw_scores = -decision_scores
+    minimum = raw_scores.min()
+    maximum = raw_scores.max()
+    if maximum > minimum:
+        normalized_scores = 100 * (
+            (raw_scores - minimum) / (maximum - minimum)
+        )
+    else:
+        normalized_scores = np.zeros(len(raw_scores))
+
+    work["anomaly_score"] = np.round(normalized_scores, 1)
+    work = add_anomaly_reasons(work)
+
+    return work.drop(
+        columns=["_merchant_for_anomaly", "_category_for_anomaly"],
+        errors="ignore",
+    )
+
 # ---------------------------------------------------------
 # Main
 # ---------------------------------------------------------
