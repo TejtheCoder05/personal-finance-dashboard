@@ -14,6 +14,7 @@ from backend.api.imports import (
     process_upload,
 )
 from backend.auth.router import router as auth_router
+from backend.api.goals import router as goals_router
 
 
 # ---------------------------------------------------------
@@ -103,6 +104,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
+app.include_router(goals_router)
 
 
 # ---------------------------------------------------------
