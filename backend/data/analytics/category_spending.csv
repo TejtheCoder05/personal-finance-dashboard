@@ -1,0 +1,6 @@
+category,total_spending,transaction_count,average_transaction,anomaly_count,spending_percentage
+Groceries,10128.12,115,88.07,3,38.3
+Shopping,8845.63,105,84.24,2,33.45
+Fuel,4451.99,75,59.36,2,16.84
+Dining,1941.67,148,13.12,2,7.34
+Entertainment,1075.81,57,18.87,1,4.07

@@ -1,0 +1,15 @@
+{
+  "model": "IsolationForest",
+  "contamination": 0.03,
+  "n_estimators": 300,
+  "random_state": 42,
+  "features": [
+    "log_amount",
+    "merchant_frequency",
+    "merchant_high_ratio",
+    "merchant_positive_robust_z"
+  ],
+  "merchant_column": "merchant",
+  "category_column": "category",
+  "training_rows": 500
+}

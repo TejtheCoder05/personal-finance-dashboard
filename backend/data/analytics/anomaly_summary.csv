@@ -1,0 +1,11 @@
+date,merchant,category,amount,anomaly_score,merchant_median_amount,merchant_amount_ratio,anomaly_reason
+2026-06-25,mobil,Fuel,407.72,100.0,55.785,7.308774760240209,amount is 7.3x this merchant's typical amount (median $55.78)
+2026-03-20,mcdonalds,Dining,124.76,99.2,11.995,10.40100041684035,amount is 10.4x this merchant's typical amount (median $12.00)
+2026-06-16,netflix,Entertainment,109.98,94.8,19.62,5.605504587155963,amount is 5.6x this merchant's typical amount (median $19.62)
+2026-02-15,amazon marketplace,Shopping,415.78,88.3,69.9,5.948211731044348,amount is 5.9x this merchant's typical amount (median $69.90)
+2026-04-11,costco wholesale,Groceries,434.13,85.5,107.98,4.0204667531024265,amount is 4.0x this merchant's typical amount (median $107.98)
+2026-02-09,costco wholesale,Groceries,359.85,80.4,107.98,3.3325615854787927,amount is 3.3x this merchant's typical amount (median $107.98)
+2026-03-31,taco bell,Dining,34.96,76.5,12.05,2.901244813278008,amount is 2.9x this merchant's typical amount (median $12.05)
+2026-02-12,speedway,Fuel,113.34,66.3,44.185,2.565123910829467,amount is 2.6x this merchant's typical amount (median $44.19)
+2026-04-26,trader joes,Groceries,167.99,61.7,72.02,2.3325465148569844,amount is 2.3x this merchant's typical amount (median $72.02)
+2026-03-16,etsy,Shopping,143.24,58.3,58.8,2.436054421768708,amount is 2.4x this merchant's typical amount (median $58.80)

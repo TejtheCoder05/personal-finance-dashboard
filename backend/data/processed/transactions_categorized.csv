@@ -1,0 +1,501 @@
+date,description_raw,amount,true_category,true_anomaly,description_clean,merchant,month,day_of_week,day_of_month,category,category_confidence
+2026-02-01,MAX STREAMING,24.9,Entertainment,0,max streaming,max streaming,2,6,1,Entertainment,0.9204
+2026-02-01,TARGET STORE 1192,84.47,Shopping,0,target store,target,2,6,1,Shopping,0.8032
+2026-02-03,TACO BELL 3982,17.91,Dining,0,taco bell,taco bell,2,1,3,Dining,0.861
+2026-02-03,CHEVRON 5812,50.44,Fuel,0,chevron,chevron,2,1,3,Fuel,0.9404
+2026-02-04,SPEEDWAY 8912,29.91,Fuel,0,speedway,speedway,2,2,4,Fuel,0.8361
+2026-02-04,TRADER JOES #551,39.07,Groceries,0,trader joes,trader joes,2,2,4,Groceries,0.8246
+2026-02-04,DUNKIN 349832,7.99,Dining,0,dunkin,dunkin,2,2,4,Dining,0.8728
+2026-02-05,BP GAS STATION 2281,32.23,Fuel,0,bp gas station,bp,2,3,5,Fuel,0.8547
+2026-02-05,TARGET STORE 1192,89.95,Shopping,0,target store,target,2,3,5,Shopping,0.8032
+2026-02-05,BP GAS STATION 2281,74.07,Fuel,0,bp gas station,bp,2,3,5,Fuel,0.8547
+2026-02-05,STARBUCKS STORE 12931,14.2,Dining,0,starbucks store,starbucks,2,3,5,Dining,0.8092
+2026-02-06,CHEVRON 5812,48.06,Fuel,0,chevron,chevron,2,4,6,Fuel,0.9404
+2026-02-07,TRADER JOES #551,70.44,Groceries,0,trader joes,trader joes,2,5,7,Groceries,0.8246
+2026-02-07,NETFLIX.COM,16.58,Entertainment,0,netflix com,netflix,2,5,7,Entertainment,0.8948
+2026-02-07,COSTCO WHOLESALE,98.58,Groceries,0,costco wholesale,costco wholesale,2,5,7,Groceries,0.8857
+2026-02-07,SPEEDWAY 8912,25.24,Fuel,0,speedway,speedway,2,5,7,Fuel,0.8361
+2026-02-07,STARBUCKS STORE 12931,10.1,Dining,0,starbucks store,starbucks,2,5,7,Dining,0.8092
+2026-02-08,STARBUCKS STORE 12931,12.55,Dining,0,starbucks store,starbucks,2,6,8,Dining,0.8092
+2026-02-08,BEST BUY 882,123.42,Shopping,0,best buy,best buy,2,6,8,Shopping,0.8555
+2026-02-08,KROGER #912,79.4,Groceries,0,kroger,kroger,2,6,8,Groceries,0.7572
+2026-02-08,NETFLIX.COM,19.62,Entertainment,0,netflix com,netflix,2,6,8,Entertainment,0.8948
+2026-02-08,BEST BUY 882,61.74,Shopping,0,best buy,best buy,2,6,8,Shopping,0.8555
+2026-02-09,WHOLE FOODS MARKET,71.1,Groceries,0,whole foods market,whole foods,2,0,9,Groceries,0.8276
+2026-02-09,DUNKIN 349832,4.69,Dining,0,dunkin,dunkin,2,0,9,Dining,0.8728
+2026-02-09,COSTCO WHOLESALE,359.85,Groceries,1,costco wholesale,costco wholesale,2,0,9,Groceries,0.8857
+2026-02-09,DUNKIN 349832,7.79,Dining,0,dunkin,dunkin,2,0,9,Dining,0.8728
+2026-02-10,PANERA BREAD 2918,18.11,Dining,0,panera bread,panera bread,2,1,10,Dining,0.8521
+2026-02-10,WHOLE FOODS MARKET,69.31,Groceries,0,whole foods market,whole foods,2,1,10,Groceries,0.8276
+2026-02-10,WHOLE FOODS MARKET,103.95,Groceries,0,whole foods market,whole foods,2,1,10,Groceries,0.8276
+2026-02-10,DUNKIN 349832,3.01,Dining,0,dunkin,dunkin,2,1,10,Dining,0.8728
+2026-02-10,DISNEY PLUS,19.24,Entertainment,0,disney plus,disney plus,2,1,10,Entertainment,0.8426
+2026-02-11,STARBUCKS STORE 12931,13.18,Dining,0,starbucks store,starbucks,2,2,11,Dining,0.8092
+2026-02-12,TACO BELL 3982,10.96,Dining,0,taco bell,taco bell,2,3,12,Dining,0.861
+2026-02-12,DUNKIN 349832,8.01,Dining,0,dunkin,dunkin,2,3,12,Dining,0.8728
+2026-02-12,SPEEDWAY 8912,113.34,Fuel,1,speedway,speedway,2,3,12,Fuel,0.8361
+2026-02-13,BEST BUY 882,51.69,Shopping,0,best buy,best buy,2,4,13,Shopping,0.8555
+2026-02-15,AMAZON MARKETPLACE,415.78,Shopping,1,amazon marketplace,amazon marketplace,2,6,15,Shopping,0.8586
+2026-02-15,WHOLE FOODS MARKET,113.09,Groceries,0,whole foods market,whole foods,2,6,15,Groceries,0.8276
+2026-02-15,EXXON 57291,51.9,Fuel,0,exxon,exxon,2,6,15,Fuel,0.8754
+2026-02-15,KROGER #912,32.98,Groceries,0,kroger,kroger,2,6,15,Groceries,0.7572
+2026-02-16,COSTCO WHOLESALE,56.52,Groceries,0,costco wholesale,costco wholesale,2,0,16,Groceries,0.8857
+2026-02-17,SHELL OIL 88321,73.9,Fuel,0,shell oil,shell,2,1,17,Fuel,0.8847
+2026-02-17,CHIPOTLE 1432,20.28,Dining,0,chipotle,chipotle,2,1,17,Dining,0.8391
+2026-02-17,SHOPRITE #441,42.36,Groceries,0,shoprite,shoprite,2,1,17,Groceries,0.7574
+2026-02-17,COSTCO WHOLESALE,164.55,Groceries,0,costco wholesale,costco wholesale,2,1,17,Groceries,0.8857
+2026-02-17,CHEVRON 5812,70.37,Fuel,0,chevron,chevron,2,1,17,Fuel,0.9404
+2026-02-17,MCDONALDS F3812,8.57,Dining,0,mcdonalds f,mcdonalds,2,1,17,Dining,0.8766
+2026-02-18,CHEVRON 5812,39.2,Fuel,0,chevron,chevron,2,2,18,Fuel,0.9404
+2026-02-18,SHOPRITE #441,104.15,Groceries,0,shoprite,shoprite,2,2,18,Groceries,0.7574
+2026-02-18,COSTCO WHOLESALE,144.55,Groceries,0,costco wholesale,costco wholesale,2,2,18,Groceries,0.8857
+2026-02-18,NETFLIX.COM,21.16,Entertainment,0,netflix com,netflix,2,2,18,Entertainment,0.8948
+2026-02-19,APPLE MUSIC,18.0,Entertainment,0,apple music,apple music,2,3,19,Entertainment,0.8728
+2026-02-19,ETSY.COM,13.7,Shopping,0,etsy com,etsy,2,3,19,Shopping,0.8857
+2026-02-20,CHEVRON 5812,74.87,Fuel,0,chevron,chevron,2,4,20,Fuel,0.9404
+2026-02-20,SHELL OIL 88321,71.22,Fuel,0,shell oil,shell,2,4,20,Fuel,0.8847
+2026-02-20,APPLE MUSIC,9.68,Entertainment,0,apple music,apple music,2,4,20,Entertainment,0.8728
+2026-02-20,SPOTIFY USA,16.72,Entertainment,0,spotify usa,spotify,2,4,20,Entertainment,0.8853
+2026-02-20,COSTCO WHOLESALE,75.34,Groceries,0,costco wholesale,costco wholesale,2,4,20,Groceries,0.8857
+2026-02-21,AMZN MKTP US,90.57,Shopping,0,amzn mktp us,amazon,2,5,21,Shopping,0.8063
+2026-02-21,CHIPOTLE 1432,18.53,Dining,0,chipotle,chipotle,2,5,21,Dining,0.8391
+2026-02-21,MCDONALDS F3812,6.3,Dining,0,mcdonalds f,mcdonalds,2,5,21,Dining,0.8766
+2026-02-22,TARGET STORE 1192,135.98,Shopping,0,target store,target,2,6,22,Shopping,0.8032
+2026-02-22,EBAY COMMERCE,26.39,Shopping,0,ebay commerce,ebay commerce,2,6,22,Shopping,0.8827
+2026-02-22,SHOPRITE #441,47.74,Groceries,0,shoprite,shoprite,2,6,22,Groceries,0.7574
+2026-02-22,SPEEDWAY 8912,47.78,Fuel,0,speedway,speedway,2,6,22,Fuel,0.8361
+2026-02-22,NETFLIX.COM,20.88,Entertainment,0,netflix com,netflix,2,6,22,Entertainment,0.8948
+2026-02-22,TARGET STORE 1192,129.82,Shopping,0,target store,target,2,6,22,Shopping,0.8032
+2026-02-23,BEST BUY 882,203.03,Shopping,0,best buy,best buy,2,0,23,Shopping,0.8555
+2026-02-23,CHIPOTLE 1432,16.58,Dining,0,chipotle,chipotle,2,0,23,Dining,0.8391
+2026-02-23,HULU,23.46,Entertainment,0,hulu,hulu,2,0,23,Entertainment,0.907
+2026-02-23,WHOLE FOODS MARKET,40.09,Groceries,0,whole foods market,whole foods,2,0,23,Groceries,0.8276
+2026-02-23,MCDONALDS F3812,18.99,Dining,0,mcdonalds f,mcdonalds,2,0,23,Dining,0.8766
+2026-02-24,EBAY COMMERCE,96.01,Shopping,0,ebay commerce,ebay commerce,2,1,24,Shopping,0.8827
+2026-02-24,SHELL OIL 88321,42.38,Fuel,0,shell oil,shell,2,1,24,Fuel,0.8847
+2026-02-25,ALDI #128,65.99,Groceries,0,aldi,aldi,2,2,25,Groceries,0.7881
+2026-02-25,STARBUCKS STORE 12931,14.11,Dining,0,starbucks store,starbucks,2,2,25,Dining,0.8092
+2026-02-25,MOBIL 29182,54.12,Fuel,0,mobil,mobil,2,2,25,Fuel,0.8379
+2026-02-25,ETSY.COM,96.3,Shopping,0,etsy com,etsy,2,2,25,Shopping,0.8857
+2026-02-26,BEST BUY 882,123.1,Shopping,0,best buy,best buy,2,3,26,Shopping,0.8555
+2026-02-26,AMAZON MARKETPLACE,106.7,Shopping,0,amazon marketplace,amazon marketplace,2,3,26,Shopping,0.8586
+2026-02-26,CHEVRON 5812,39.0,Fuel,0,chevron,chevron,2,3,26,Fuel,0.9404
+2026-02-26,PANERA BREAD 2918,19.78,Dining,0,panera bread,panera bread,2,3,26,Dining,0.8521
+2026-02-26,NETFLIX.COM,16.15,Entertainment,0,netflix com,netflix,2,3,26,Entertainment,0.8948
+2026-02-27,ALDI #128,28.27,Groceries,0,aldi,aldi,2,4,27,Groceries,0.7881
+2026-02-28,DUNKIN 349832,10.51,Dining,0,dunkin,dunkin,2,5,28,Dining,0.8728
+2026-02-28,MCDONALDS F3812,14.85,Dining,0,mcdonalds f,mcdonalds,2,5,28,Dining,0.8766
+2026-02-28,STARBUCKS STORE 12931,9.87,Dining,0,starbucks store,starbucks,2,5,28,Dining,0.8092
+2026-03-02,BEST BUY 882,85.49,Shopping,0,best buy,best buy,3,0,2,Shopping,0.8555
+2026-03-02,AMZN MKTP US,70.99,Shopping,0,amzn mktp us,amazon,3,0,2,Shopping,0.8063
+2026-03-02,PANERA BREAD 2918,22.22,Dining,0,panera bread,panera bread,3,0,2,Dining,0.8521
+2026-03-02,STARBUCKS STORE 12931,11.95,Dining,0,starbucks store,starbucks,3,0,2,Dining,0.8092
+2026-03-02,KROGER #912,80.1,Groceries,0,kroger,kroger,3,0,2,Groceries,0.7572
+2026-03-03,MAX STREAMING,23.88,Entertainment,0,max streaming,max streaming,3,1,3,Entertainment,0.9204
+2026-03-03,BEST BUY 882,21.73,Shopping,0,best buy,best buy,3,1,3,Shopping,0.8555
+2026-03-04,BEST BUY 882,117.4,Shopping,0,best buy,best buy,3,2,4,Shopping,0.8555
+2026-03-04,ALDI #128,74.25,Groceries,0,aldi,aldi,3,2,4,Groceries,0.7881
+2026-03-04,HULU,15.08,Entertainment,0,hulu,hulu,3,2,4,Entertainment,0.907
+2026-03-04,MCDONALDS F3812,8.45,Dining,0,mcdonalds f,mcdonalds,3,2,4,Dining,0.8766
+2026-03-04,STARBUCKS STORE 12931,4.59,Dining,0,starbucks store,starbucks,3,2,4,Dining,0.8092
+2026-03-05,AMAZON MARKETPLACE,31.95,Shopping,0,amazon marketplace,amazon marketplace,3,3,5,Shopping,0.8586
+2026-03-05,HULU,14.81,Entertainment,0,hulu,hulu,3,3,5,Entertainment,0.907
+2026-03-06,BP GAS STATION 2281,55.3,Fuel,0,bp gas station,bp,3,4,6,Fuel,0.8547
+2026-03-06,DISNEY PLUS,24.83,Entertainment,0,disney plus,disney plus,3,4,6,Entertainment,0.8426
+2026-03-06,EBAY COMMERCE,93.2,Shopping,0,ebay commerce,ebay commerce,3,4,6,Shopping,0.8827
+2026-03-06,TACO BELL 3982,5.41,Dining,0,taco bell,taco bell,3,4,6,Dining,0.861
+2026-03-06,ETSY.COM,19.66,Shopping,0,etsy com,etsy,3,4,6,Shopping,0.8857
+2026-03-06,TACO BELL 3982,11.79,Dining,0,taco bell,taco bell,3,4,6,Dining,0.861
+2026-03-07,TARGET STORE 1192,44.81,Shopping,0,target store,target,3,5,7,Shopping,0.8032
+2026-03-07,WHOLE FOODS MARKET,41.36,Groceries,0,whole foods market,whole foods,3,5,7,Groceries,0.8276
+2026-03-08,MOBIL 29182,51.0,Fuel,0,mobil,mobil,3,6,8,Fuel,0.8379
+2026-03-08,MOBIL 29182,70.98,Fuel,0,mobil,mobil,3,6,8,Fuel,0.8379
+2026-03-08,CHIPOTLE 1432,17.67,Dining,0,chipotle,chipotle,3,6,8,Dining,0.8391
+2026-03-09,EXXON 57291,61.27,Fuel,0,exxon,exxon,3,0,9,Fuel,0.8754
+2026-03-09,ETSY.COM,58.79,Shopping,0,etsy com,etsy,3,0,9,Shopping,0.8857
+2026-03-10,BP GAS STATION 2281,43.59,Fuel,0,bp gas station,bp,3,1,10,Fuel,0.8547
+2026-03-10,PANERA BREAD 2918,16.93,Dining,0,panera bread,panera bread,3,1,10,Dining,0.8521
+2026-03-11,COSTCO WHOLESALE,118.77,Groceries,0,costco wholesale,costco wholesale,3,2,11,Groceries,0.8857
+2026-03-11,COSTCO WHOLESALE,97.19,Groceries,0,costco wholesale,costco wholesale,3,2,11,Groceries,0.8857
+2026-03-11,APPLE MUSIC,9.68,Entertainment,0,apple music,apple music,3,2,11,Entertainment,0.8728
+2026-03-11,SPOTIFY USA,14.14,Entertainment,0,spotify usa,spotify,3,2,11,Entertainment,0.8853
+2026-03-11,EXXON 57291,34.46,Fuel,0,exxon,exxon,3,2,11,Fuel,0.8754
+2026-03-12,COSTCO WHOLESALE,122.36,Groceries,0,costco wholesale,costco wholesale,3,3,12,Groceries,0.8857
+2026-03-12,WHOLE FOODS MARKET,119.77,Groceries,0,whole foods market,whole foods,3,3,12,Groceries,0.8276
+2026-03-13,SHOPRITE #441,89.38,Groceries,0,shoprite,shoprite,3,4,13,Groceries,0.7574
+2026-03-13,MCDONALDS F3812,12.13,Dining,0,mcdonalds f,mcdonalds,3,4,13,Dining,0.8766
+2026-03-14,SPOTIFY USA,16.38,Entertainment,0,spotify usa,spotify,3,5,14,Entertainment,0.8853
+2026-03-14,STARBUCKS STORE 12931,5.45,Dining,0,starbucks store,starbucks,3,5,14,Dining,0.8092
+2026-03-15,AMZN MKTP US,16.41,Shopping,0,amzn mktp us,amazon,3,6,15,Shopping,0.8063
+2026-03-15,TACO BELL 3982,13.08,Dining,0,taco bell,taco bell,3,6,15,Dining,0.861
+2026-03-16,ETSY.COM,143.24,Shopping,1,etsy com,etsy,3,0,16,Shopping,0.8857
+2026-03-16,TACO BELL 3982,9.19,Dining,0,taco bell,taco bell,3,0,16,Dining,0.861
+2026-03-16,STARBUCKS STORE 12931,5.57,Dining,0,starbucks store,starbucks,3,0,16,Dining,0.8092
+2026-03-16,KROGER #912,94.48,Groceries,0,kroger,kroger,3,0,16,Groceries,0.7572
+2026-03-17,STARBUCKS STORE 12931,5.77,Dining,0,starbucks store,starbucks,3,1,17,Dining,0.8092
+2026-03-17,ALDI #128,38.93,Groceries,0,aldi,aldi,3,1,17,Groceries,0.7881
+2026-03-17,STARBUCKS STORE 12931,10.28,Dining,0,starbucks store,starbucks,3,1,17,Dining,0.8092
+2026-03-18,CHIPOTLE 1432,10.73,Dining,0,chipotle,chipotle,3,2,18,Dining,0.8391
+2026-03-18,CHIPOTLE 1432,8.51,Dining,0,chipotle,chipotle,3,2,18,Dining,0.8391
+2026-03-18,EBAY COMMERCE,95.51,Shopping,0,ebay commerce,ebay commerce,3,2,18,Shopping,0.8827
+2026-03-19,CHEVRON 5812,67.21,Fuel,0,chevron,chevron,3,3,19,Fuel,0.9404
+2026-03-19,TRADER JOES #551,28.84,Groceries,0,trader joes,trader joes,3,3,19,Groceries,0.8246
+2026-03-19,STARBUCKS STORE 12931,10.45,Dining,0,starbucks store,starbucks,3,3,19,Dining,0.8092
+2026-03-19,COSTCO WHOLESALE,171.05,Groceries,0,costco wholesale,costco wholesale,3,3,19,Groceries,0.8857
+2026-03-20,MCDONALDS F3812,124.76,Dining,1,mcdonalds f,mcdonalds,3,4,20,Dining,0.8766
+2026-03-21,KROGER #912,63.16,Groceries,0,kroger,kroger,3,5,21,Groceries,0.7572
+2026-03-23,MCDONALDS F3812,15.84,Dining,0,mcdonalds f,mcdonalds,3,0,23,Dining,0.8766
+2026-03-24,ETSY.COM,85.32,Shopping,0,etsy com,etsy,3,1,24,Shopping,0.8857
+2026-03-24,STARBUCKS STORE 12931,11.42,Dining,0,starbucks store,starbucks,3,1,24,Dining,0.8092
+2026-03-24,DUNKIN 349832,13.61,Dining,0,dunkin,dunkin,3,1,24,Dining,0.8728
+2026-03-25,SPEEDWAY 8912,58.06,Fuel,0,speedway,speedway,3,2,25,Fuel,0.8361
+2026-03-25,TACO BELL 3982,13.6,Dining,0,taco bell,taco bell,3,2,25,Dining,0.861
+2026-03-25,STARBUCKS STORE 12931,9.39,Dining,0,starbucks store,starbucks,3,2,25,Dining,0.8092
+2026-03-26,TARGET STORE 1192,76.9,Shopping,0,target store,target,3,3,26,Shopping,0.8032
+2026-03-27,CHEVRON 5812,70.63,Fuel,0,chevron,chevron,3,4,27,Fuel,0.9404
+2026-03-27,WHOLE FOODS MARKET,99.33,Groceries,0,whole foods market,whole foods,3,4,27,Groceries,0.8276
+2026-03-27,BEST BUY 882,152.94,Shopping,0,best buy,best buy,3,4,27,Shopping,0.8555
+2026-03-27,SHOPRITE #441,122.25,Groceries,0,shoprite,shoprite,3,4,27,Groceries,0.7574
+2026-03-27,MAX STREAMING,10.46,Entertainment,0,max streaming,max streaming,3,4,27,Entertainment,0.9204
+2026-03-27,CHIPOTLE 1432,15.27,Dining,0,chipotle,chipotle,3,4,27,Dining,0.8391
+2026-03-27,COSTCO WHOLESALE,108.4,Groceries,0,costco wholesale,costco wholesale,3,4,27,Groceries,0.8857
+2026-03-28,BP GAS STATION 2281,60.94,Fuel,0,bp gas station,bp,3,5,28,Fuel,0.8547
+2026-03-28,TRADER JOES #551,75.87,Groceries,0,trader joes,trader joes,3,5,28,Groceries,0.8246
+2026-03-28,PANERA BREAD 2918,17.85,Dining,0,panera bread,panera bread,3,5,28,Dining,0.8521
+2026-03-28,STARBUCKS STORE 12931,12.55,Dining,0,starbucks store,starbucks,3,5,28,Dining,0.8092
+2026-03-28,AMAZON MARKETPLACE,25.83,Shopping,0,amazon marketplace,amazon marketplace,3,5,28,Shopping,0.8586
+2026-03-29,ALDI #128,32.61,Groceries,0,aldi,aldi,3,6,29,Groceries,0.7881
+2026-03-29,KROGER #912,35.1,Groceries,0,kroger,kroger,3,6,29,Groceries,0.7572
+2026-03-29,NETFLIX.COM,20.64,Entertainment,0,netflix com,netflix,3,6,29,Entertainment,0.8948
+2026-03-29,EXXON 57291,67.45,Fuel,0,exxon,exxon,3,6,29,Fuel,0.8754
+2026-03-29,CHEVRON 5812,65.43,Fuel,0,chevron,chevron,3,6,29,Fuel,0.9404
+2026-03-30,AMZN MKTP US,97.91,Shopping,0,amzn mktp us,amazon,3,0,30,Shopping,0.8063
+2026-03-30,ALDI #128,68.7,Groceries,0,aldi,aldi,3,0,30,Groceries,0.7881
+2026-03-30,AMAZON MARKETPLACE,69.9,Shopping,0,amazon marketplace,amazon marketplace,3,0,30,Shopping,0.8586
+2026-03-30,AMAZON MARKETPLACE,60.73,Shopping,0,amazon marketplace,amazon marketplace,3,0,30,Shopping,0.8586
+2026-03-31,STARBUCKS STORE 12931,6.67,Dining,0,starbucks store,starbucks,3,1,31,Dining,0.8092
+2026-03-31,TACO BELL 3982,34.96,Dining,1,taco bell,taco bell,3,1,31,Dining,0.861
+2026-04-01,SPEEDWAY 8912,64.54,Fuel,0,speedway,speedway,4,2,1,Fuel,0.8361
+2026-04-01,KROGER #912,83.54,Groceries,0,kroger,kroger,4,2,1,Groceries,0.7572
+2026-04-02,DUNKIN 349832,4.9,Dining,0,dunkin,dunkin,4,3,2,Dining,0.8728
+2026-04-03,BP GAS STATION 2281,48.37,Fuel,0,bp gas station,bp,4,4,3,Fuel,0.8547
+2026-04-03,MCDONALDS F3812,7.36,Dining,0,mcdonalds f,mcdonalds,4,4,3,Dining,0.8766
+2026-04-03,ETSY.COM,57.78,Shopping,0,etsy com,etsy,4,4,3,Shopping,0.8857
+2026-04-03,APPLE MUSIC,13.04,Entertainment,0,apple music,apple music,4,4,3,Entertainment,0.8728
+2026-04-03,PANERA BREAD 2918,20.2,Dining,0,panera bread,panera bread,4,4,3,Dining,0.8521
+2026-04-03,TACO BELL 3982,15.33,Dining,0,taco bell,taco bell,4,4,3,Dining,0.861
+2026-04-04,SPOTIFY USA,16.63,Entertainment,0,spotify usa,spotify,4,5,4,Entertainment,0.8853
+2026-04-04,BEST BUY 882,216.27,Shopping,0,best buy,best buy,4,5,4,Shopping,0.8555
+2026-04-04,HULU,18.86,Entertainment,0,hulu,hulu,4,5,4,Entertainment,0.907
+2026-04-04,COSTCO WHOLESALE,93.0,Groceries,0,costco wholesale,costco wholesale,4,5,4,Groceries,0.8857
+2026-04-07,PANERA BREAD 2918,17.17,Dining,0,panera bread,panera bread,4,1,7,Dining,0.8521
+2026-04-07,ETSY.COM,76.47,Shopping,0,etsy com,etsy,4,1,7,Shopping,0.8857
+2026-04-07,CHIPOTLE 1432,9.14,Dining,0,chipotle,chipotle,4,1,7,Dining,0.8391
+2026-04-08,WHOLE FOODS MARKET,54.11,Groceries,0,whole foods market,whole foods,4,2,8,Groceries,0.8276
+2026-04-08,TACO BELL 3982,10.26,Dining,0,taco bell,taco bell,4,2,8,Dining,0.861
+2026-04-08,ALDI #128,94.14,Groceries,0,aldi,aldi,4,2,8,Groceries,0.7881
+2026-04-08,MCDONALDS F3812,11.13,Dining,0,mcdonalds f,mcdonalds,4,2,8,Dining,0.8766
+2026-04-09,BEST BUY 882,43.25,Shopping,0,best buy,best buy,4,3,9,Shopping,0.8555
+2026-04-10,EBAY COMMERCE,117.91,Shopping,0,ebay commerce,ebay commerce,4,4,10,Shopping,0.8827
+2026-04-10,TRADER JOES #551,83.29,Groceries,0,trader joes,trader joes,4,4,10,Groceries,0.8246
+2026-04-11,NETFLIX.COM,17.71,Entertainment,0,netflix com,netflix,4,5,11,Entertainment,0.8948
+2026-04-11,COSTCO WHOLESALE,434.13,Groceries,1,costco wholesale,costco wholesale,4,5,11,Groceries,0.8857
+2026-04-11,MOBIL 29182,58.84,Fuel,0,mobil,mobil,4,5,11,Fuel,0.8379
+2026-04-11,EBAY COMMERCE,50.37,Shopping,0,ebay commerce,ebay commerce,4,5,11,Shopping,0.8827
+2026-04-11,DUNKIN 349832,3.67,Dining,0,dunkin,dunkin,4,5,11,Dining,0.8728
+2026-04-12,TRADER JOES #551,36.14,Groceries,0,trader joes,trader joes,4,6,12,Groceries,0.8246
+2026-04-13,AMZN MKTP US,118.94,Shopping,0,amzn mktp us,amazon,4,0,13,Shopping,0.8063
+2026-04-13,DISNEY PLUS,20.16,Entertainment,0,disney plus,disney plus,4,0,13,Entertainment,0.8426
+2026-04-13,MAX STREAMING,16.68,Entertainment,0,max streaming,max streaming,4,0,13,Entertainment,0.9204
+2026-04-13,BEST BUY 882,177.65,Shopping,0,best buy,best buy,4,0,13,Shopping,0.8555
+2026-04-13,CHIPOTLE 1432,23.59,Dining,0,chipotle,chipotle,4,0,13,Dining,0.8391
+2026-04-14,STARBUCKS STORE 12931,7.56,Dining,0,starbucks store,starbucks,4,1,14,Dining,0.8092
+2026-04-14,DUNKIN 349832,12.63,Dining,0,dunkin,dunkin,4,1,14,Dining,0.8728
+2026-04-14,AMAZON MARKETPLACE,98.99,Shopping,0,amazon marketplace,amazon marketplace,4,1,14,Shopping,0.8586
+2026-04-15,HULU,19.03,Entertainment,0,hulu,hulu,4,2,15,Entertainment,0.907
+2026-04-16,AMAZON MARKETPLACE,97.31,Shopping,0,amazon marketplace,amazon marketplace,4,3,16,Shopping,0.8586
+2026-04-16,SPOTIFY USA,13.74,Entertainment,0,spotify usa,spotify,4,3,16,Entertainment,0.8853
+2026-04-16,WHOLE FOODS MARKET,30.18,Groceries,0,whole foods market,whole foods,4,3,16,Groceries,0.8276
+2026-04-16,DUNKIN 349832,7.95,Dining,0,dunkin,dunkin,4,3,16,Dining,0.8728
+2026-04-16,EBAY COMMERCE,55.02,Shopping,0,ebay commerce,ebay commerce,4,3,16,Shopping,0.8827
+2026-04-17,SHOPRITE #441,46.25,Groceries,0,shoprite,shoprite,4,4,17,Groceries,0.7574
+2026-04-17,AMZN MKTP US,66.6,Shopping,0,amzn mktp us,amazon,4,4,17,Shopping,0.8063
+2026-04-17,COSTCO WHOLESALE,49.36,Groceries,0,costco wholesale,costco wholesale,4,4,17,Groceries,0.8857
+2026-04-18,CHIPOTLE 1432,18.53,Dining,0,chipotle,chipotle,4,5,18,Dining,0.8391
+2026-04-18,CHIPOTLE 1432,10.99,Dining,0,chipotle,chipotle,4,5,18,Dining,0.8391
+2026-04-19,CHEVRON 5812,58.23,Fuel,0,chevron,chevron,4,6,19,Fuel,0.9404
+2026-04-19,COSTCO WHOLESALE,45.02,Groceries,0,costco wholesale,costco wholesale,4,6,19,Groceries,0.8857
+2026-04-19,SPOTIFY USA,16.26,Entertainment,0,spotify usa,spotify,4,6,19,Entertainment,0.8853
+2026-04-19,TRADER JOES #551,78.82,Groceries,0,trader joes,trader joes,4,6,19,Groceries,0.8246
+2026-04-20,CHEVRON 5812,68.64,Fuel,0,chevron,chevron,4,0,20,Fuel,0.9404
+2026-04-20,SPEEDWAY 8912,62.47,Fuel,0,speedway,speedway,4,0,20,Fuel,0.8361
+2026-04-20,MAX STREAMING,11.98,Entertainment,0,max streaming,max streaming,4,0,20,Entertainment,0.9204
+2026-04-21,HULU,24.04,Entertainment,0,hulu,hulu,4,1,21,Entertainment,0.907
+2026-04-21,APPLE MUSIC,8.26,Entertainment,0,apple music,apple music,4,1,21,Entertainment,0.8728
+2026-04-22,MOBIL 29182,71.88,Fuel,0,mobil,mobil,4,2,22,Fuel,0.8379
+2026-04-22,MOBIL 29182,42.25,Fuel,0,mobil,mobil,4,2,22,Fuel,0.8379
+2026-04-23,WHOLE FOODS MARKET,92.47,Groceries,0,whole foods market,whole foods,4,3,23,Groceries,0.8276
+2026-04-24,MOBIL 29182,59.7,Fuel,0,mobil,mobil,4,4,24,Fuel,0.8379
+2026-04-24,BEST BUY 882,200.34,Shopping,0,best buy,best buy,4,4,24,Shopping,0.8555
+2026-04-25,WHOLE FOODS MARKET,30.6,Groceries,0,whole foods market,whole foods,4,5,25,Groceries,0.8276
+2026-04-25,DISNEY PLUS,20.35,Entertainment,0,disney plus,disney plus,4,5,25,Entertainment,0.8426
+2026-04-25,NETFLIX.COM,19.0,Entertainment,0,netflix com,netflix,4,5,25,Entertainment,0.8948
+2026-04-26,CHEVRON 5812,55.44,Fuel,0,chevron,chevron,4,6,26,Fuel,0.9404
+2026-04-26,SHOPRITE #441,53.0,Groceries,0,shoprite,shoprite,4,6,26,Groceries,0.7574
+2026-04-26,TRADER JOES #551,167.99,Groceries,1,trader joes,trader joes,4,6,26,Groceries,0.8246
+2026-04-26,BEST BUY 882,65.25,Shopping,0,best buy,best buy,4,6,26,Shopping,0.8555
+2026-04-27,NETFLIX.COM,24.5,Entertainment,0,netflix com,netflix,4,0,27,Entertainment,0.8948
+2026-04-27,COSTCO WHOLESALE,179.26,Groceries,0,costco wholesale,costco wholesale,4,0,27,Groceries,0.8857
+2026-04-27,AMAZON MARKETPLACE,16.64,Shopping,0,amazon marketplace,amazon marketplace,4,0,27,Shopping,0.8586
+2026-04-27,PANERA BREAD 2918,11.86,Dining,0,panera bread,panera bread,4,0,27,Dining,0.8521
+2026-04-28,BEST BUY 882,149.81,Shopping,0,best buy,best buy,4,1,28,Shopping,0.8555
+2026-04-28,MCDONALDS F3812,11.84,Dining,0,mcdonalds f,mcdonalds,4,1,28,Dining,0.8766
+2026-04-29,HULU,13.9,Entertainment,0,hulu,hulu,4,2,29,Entertainment,0.907
+2026-04-30,WHOLE FOODS MARKET,88.27,Groceries,0,whole foods market,whole foods,4,3,30,Groceries,0.8276
+2026-04-30,TARGET STORE 1192,30.64,Shopping,0,target store,target,4,3,30,Shopping,0.8032
+2026-04-30,MAX STREAMING,11.26,Entertainment,0,max streaming,max streaming,4,3,30,Entertainment,0.9204
+2026-04-30,CHEVRON 5812,56.98,Fuel,0,chevron,chevron,4,3,30,Fuel,0.9404
+2026-04-30,WHOLE FOODS MARKET,66.64,Groceries,0,whole foods market,whole foods,4,3,30,Groceries,0.8276
+2026-05-01,ALDI #128,62.51,Groceries,0,aldi,aldi,5,4,1,Groceries,0.7881
+2026-05-02,COSTCO WHOLESALE,162.5,Groceries,0,costco wholesale,costco wholesale,5,5,2,Groceries,0.8857
+2026-05-02,SPOTIFY USA,16.86,Entertainment,0,spotify usa,spotify,5,5,2,Entertainment,0.8853
+2026-05-02,TARGET STORE 1192,34.43,Shopping,0,target store,target,5,5,2,Shopping,0.8032
+2026-05-02,SHELL OIL 88321,63.76,Fuel,0,shell oil,shell,5,5,2,Fuel,0.8847
+2026-05-03,PANERA BREAD 2918,24.86,Dining,0,panera bread,panera bread,5,6,3,Dining,0.8521
+2026-05-03,MCDONALDS F3812,11.66,Dining,0,mcdonalds f,mcdonalds,5,6,3,Dining,0.8766
+2026-05-04,COSTCO WHOLESALE,143.14,Groceries,0,costco wholesale,costco wholesale,5,0,4,Groceries,0.8857
+2026-05-05,ALDI #128,60.66,Groceries,0,aldi,aldi,5,1,5,Groceries,0.7881
+2026-05-05,TRADER JOES #551,88.05,Groceries,0,trader joes,trader joes,5,1,5,Groceries,0.8246
+2026-05-06,KROGER #912,106.39,Groceries,0,kroger,kroger,5,2,6,Groceries,0.7572
+2026-05-06,ETSY.COM,99.7,Shopping,0,etsy com,etsy,5,2,6,Shopping,0.8857
+2026-05-08,TARGET STORE 1192,98.94,Shopping,0,target store,target,5,4,8,Shopping,0.8032
+2026-05-08,AMAZON MARKETPLACE,78.86,Shopping,0,amazon marketplace,amazon marketplace,5,4,8,Shopping,0.8586
+2026-05-08,PANERA BREAD 2918,23.57,Dining,0,panera bread,panera bread,5,4,8,Dining,0.8521
+2026-05-09,HULU,23.48,Entertainment,0,hulu,hulu,5,5,9,Entertainment,0.907
+2026-05-11,STARBUCKS STORE 12931,12.82,Dining,0,starbucks store,starbucks,5,0,11,Dining,0.8092
+2026-05-11,WHOLE FOODS MARKET,40.67,Groceries,0,whole foods market,whole foods,5,0,11,Groceries,0.8276
+2026-05-11,CHIPOTLE 1432,9.08,Dining,0,chipotle,chipotle,5,0,11,Dining,0.8391
+2026-05-11,MAX STREAMING,22.43,Entertainment,0,max streaming,max streaming,5,0,11,Entertainment,0.9204
+2026-05-11,ALDI #128,72.33,Groceries,0,aldi,aldi,5,0,11,Groceries,0.7881
+2026-05-12,EBAY COMMERCE,127.47,Shopping,0,ebay commerce,ebay commerce,5,1,12,Shopping,0.8827
+2026-05-13,COSTCO WHOLESALE,77.85,Groceries,0,costco wholesale,costco wholesale,5,2,13,Groceries,0.8857
+2026-05-13,CHIPOTLE 1432,17.73,Dining,0,chipotle,chipotle,5,2,13,Dining,0.8391
+2026-05-13,COSTCO WHOLESALE,140.77,Groceries,0,costco wholesale,costco wholesale,5,2,13,Groceries,0.8857
+2026-05-14,MOBIL 29182,64.13,Fuel,0,mobil,mobil,5,3,14,Fuel,0.8379
+2026-05-15,AMZN MKTP US,98.68,Shopping,0,amzn mktp us,amazon,5,4,15,Shopping,0.8063
+2026-05-15,APPLE MUSIC,9.74,Entertainment,0,apple music,apple music,5,4,15,Entertainment,0.8728
+2026-05-16,MOBIL 29182,38.99,Fuel,0,mobil,mobil,5,5,16,Fuel,0.8379
+2026-05-16,EBAY COMMERCE,10.65,Shopping,0,ebay commerce,ebay commerce,5,5,16,Shopping,0.8827
+2026-05-17,MCDONALDS F3812,8.74,Dining,0,mcdonalds f,mcdonalds,5,6,17,Dining,0.8766
+2026-05-17,TARGET STORE 1192,114.24,Shopping,0,target store,target,5,6,17,Shopping,0.8032
+2026-05-17,KROGER #912,42.81,Groceries,0,kroger,kroger,5,6,17,Groceries,0.7572
+2026-05-17,AMAZON MARKETPLACE,103.53,Shopping,0,amazon marketplace,amazon marketplace,5,6,17,Shopping,0.8586
+2026-05-18,PANERA BREAD 2918,14.75,Dining,0,panera bread,panera bread,5,0,18,Dining,0.8521
+2026-05-18,SHELL OIL 88321,59.4,Fuel,0,shell oil,shell,5,0,18,Fuel,0.8847
+2026-05-18,MCDONALDS F3812,8.05,Dining,0,mcdonalds f,mcdonalds,5,0,18,Dining,0.8766
+2026-05-18,TARGET STORE 1192,120.65,Shopping,0,target store,target,5,0,18,Shopping,0.8032
+2026-05-18,AMZN MKTP US,49.45,Shopping,0,amzn mktp us,amazon,5,0,18,Shopping,0.8063
+2026-05-18,SPOTIFY USA,18.49,Entertainment,0,spotify usa,spotify,5,0,18,Entertainment,0.8853
+2026-05-19,AMAZON MARKETPLACE,83.58,Shopping,0,amazon marketplace,amazon marketplace,5,1,19,Shopping,0.8586
+2026-05-19,MCDONALDS F3812,18.24,Dining,0,mcdonalds f,mcdonalds,5,1,19,Dining,0.8766
+2026-05-19,CHIPOTLE 1432,11.93,Dining,0,chipotle,chipotle,5,1,19,Dining,0.8391
+2026-05-20,STARBUCKS STORE 12931,5.32,Dining,0,starbucks store,starbucks,5,2,20,Dining,0.8092
+2026-05-21,MAX STREAMING,23.02,Entertainment,0,max streaming,max streaming,5,3,21,Entertainment,0.9204
+2026-05-21,TACO BELL 3982,7.67,Dining,0,taco bell,taco bell,5,3,21,Dining,0.861
+2026-05-21,PANERA BREAD 2918,21.63,Dining,0,panera bread,panera bread,5,3,21,Dining,0.8521
+2026-05-21,ETSY.COM,48.25,Shopping,0,etsy com,etsy,5,3,21,Shopping,0.8857
+2026-05-23,ETSY.COM,58.81,Shopping,0,etsy com,etsy,5,5,23,Shopping,0.8857
+2026-05-23,PANERA BREAD 2918,12.11,Dining,0,panera bread,panera bread,5,5,23,Dining,0.8521
+2026-05-24,STARBUCKS STORE 12931,7.53,Dining,0,starbucks store,starbucks,5,6,24,Dining,0.8092
+2026-05-25,AMAZON MARKETPLACE,93.39,Shopping,0,amazon marketplace,amazon marketplace,5,0,25,Shopping,0.8586
+2026-05-25,MAX STREAMING,14.32,Entertainment,0,max streaming,max streaming,5,0,25,Entertainment,0.9204
+2026-05-25,CHEVRON 5812,68.3,Fuel,0,chevron,chevron,5,0,25,Fuel,0.9404
+2026-05-25,TRADER JOES #551,53.4,Groceries,0,trader joes,trader joes,5,0,25,Groceries,0.8246
+2026-05-26,EBAY COMMERCE,70.06,Shopping,0,ebay commerce,ebay commerce,5,1,26,Shopping,0.8827
+2026-05-26,TRADER JOES #551,97.78,Groceries,0,trader joes,trader joes,5,1,26,Groceries,0.8246
+2026-05-26,CHEVRON 5812,54.91,Fuel,0,chevron,chevron,5,1,26,Fuel,0.9404
+2026-05-26,HULU,16.18,Entertainment,0,hulu,hulu,5,1,26,Entertainment,0.907
+2026-05-27,KROGER #912,56.65,Groceries,0,kroger,kroger,5,2,27,Groceries,0.7572
+2026-05-28,SHELL OIL 88321,72.33,Fuel,0,shell oil,shell,5,3,28,Fuel,0.8847
+2026-05-28,ETSY.COM,80.36,Shopping,0,etsy com,etsy,5,3,28,Shopping,0.8857
+2026-05-28,NETFLIX.COM,15.84,Entertainment,0,netflix com,netflix,5,3,28,Entertainment,0.8948
+2026-05-29,MCDONALDS F3812,19.37,Dining,0,mcdonalds f,mcdonalds,5,4,29,Dining,0.8766
+2026-05-29,SHOPRITE #441,117.41,Groceries,0,shoprite,shoprite,5,4,29,Groceries,0.7574
+2026-05-29,EXXON 57291,59.83,Fuel,0,exxon,exxon,5,4,29,Fuel,0.8754
+2026-05-29,TACO BELL 3982,10.83,Dining,0,taco bell,taco bell,5,4,29,Dining,0.861
+2026-05-29,TARGET STORE 1192,123.59,Shopping,0,target store,target,5,4,29,Shopping,0.8032
+2026-05-30,STARBUCKS STORE 12931,12.0,Dining,0,starbucks store,starbucks,5,5,30,Dining,0.8092
+2026-05-30,MAX STREAMING,14.54,Entertainment,0,max streaming,max streaming,5,5,30,Entertainment,0.9204
+2026-05-30,WHOLE FOODS MARKET,90.98,Groceries,0,whole foods market,whole foods,5,5,30,Groceries,0.8276
+2026-05-30,MCDONALDS F3812,11.86,Dining,0,mcdonalds f,mcdonalds,5,5,30,Dining,0.8766
+2026-05-31,AMAZON MARKETPLACE,22.3,Shopping,0,amazon marketplace,amazon marketplace,5,6,31,Shopping,0.8586
+2026-05-31,MCDONALDS F3812,17.71,Dining,0,mcdonalds f,mcdonalds,5,6,31,Dining,0.8766
+2026-06-01,SHELL OIL 88321,45.01,Fuel,0,shell oil,shell,6,0,1,Fuel,0.8847
+2026-06-01,BEST BUY 882,74.66,Shopping,0,best buy,best buy,6,0,1,Shopping,0.8555
+2026-06-01,BP GAS STATION 2281,64.33,Fuel,0,bp gas station,bp,6,0,1,Fuel,0.8547
+2026-06-01,DUNKIN 349832,7.14,Dining,0,dunkin,dunkin,6,0,1,Dining,0.8728
+2026-06-02,SHELL OIL 88321,49.56,Fuel,0,shell oil,shell,6,1,2,Fuel,0.8847
+2026-06-03,TACO BELL 3982,12.31,Dining,0,taco bell,taco bell,6,2,3,Dining,0.861
+2026-06-03,DISNEY PLUS,15.9,Entertainment,0,disney plus,disney plus,6,2,3,Entertainment,0.8426
+2026-06-03,SHOPRITE #441,49.19,Groceries,0,shoprite,shoprite,6,2,3,Groceries,0.7574
+2026-06-03,COSTCO WHOLESALE,71.96,Groceries,0,costco wholesale,costco wholesale,6,2,3,Groceries,0.8857
+2026-06-04,STARBUCKS STORE 12931,7.73,Dining,0,starbucks store,starbucks,6,3,4,Dining,0.8092
+2026-06-06,MCDONALDS F3812,12.25,Dining,0,mcdonalds f,mcdonalds,6,5,6,Dining,0.8766
+2026-06-07,TARGET STORE 1192,80.2,Shopping,0,target store,target,6,6,7,Shopping,0.8032
+2026-06-07,DISNEY PLUS,19.72,Entertainment,0,disney plus,disney plus,6,6,7,Entertainment,0.8426
+2026-06-07,EBAY COMMERCE,93.33,Shopping,0,ebay commerce,ebay commerce,6,6,7,Shopping,0.8827
+2026-06-08,TACO BELL 3982,16.07,Dining,0,taco bell,taco bell,6,0,8,Dining,0.861
+2026-06-08,CHIPOTLE 1432,24.66,Dining,0,chipotle,chipotle,6,0,8,Dining,0.8391
+2026-06-08,SPEEDWAY 8912,58.24,Fuel,0,speedway,speedway,6,0,8,Fuel,0.8361
+2026-06-09,MOBIL 29182,64.82,Fuel,0,mobil,mobil,6,1,9,Fuel,0.8379
+2026-06-09,COSTCO WHOLESALE,61.06,Groceries,0,costco wholesale,costco wholesale,6,1,9,Groceries,0.8857
+2026-06-09,AMZN MKTP US,91.29,Shopping,0,amzn mktp us,amazon,6,1,9,Shopping,0.8063
+2026-06-10,PANERA BREAD 2918,10.87,Dining,0,panera bread,panera bread,6,2,10,Dining,0.8521
+2026-06-10,KROGER #912,118.76,Groceries,0,kroger,kroger,6,2,10,Groceries,0.7572
+2026-06-11,DUNKIN 349832,3.93,Dining,0,dunkin,dunkin,6,3,11,Dining,0.8728
+2026-06-12,SHOPRITE #441,87.53,Groceries,0,shoprite,shoprite,6,4,12,Groceries,0.7574
+2026-06-13,COSTCO WHOLESALE,162.97,Groceries,0,costco wholesale,costco wholesale,6,5,13,Groceries,0.8857
+2026-06-13,PANERA BREAD 2918,11.28,Dining,0,panera bread,panera bread,6,5,13,Dining,0.8521
+2026-06-13,ALDI #128,40.6,Groceries,0,aldi,aldi,6,5,13,Groceries,0.7881
+2026-06-14,MCDONALDS F3812,17.93,Dining,0,mcdonalds f,mcdonalds,6,6,14,Dining,0.8766
+2026-06-14,ETSY.COM,52.19,Shopping,0,etsy com,etsy,6,6,14,Shopping,0.8857
+2026-06-14,ETSY.COM,82.08,Shopping,0,etsy com,etsy,6,6,14,Shopping,0.8857
+2026-06-14,SHOPRITE #441,36.39,Groceries,0,shoprite,shoprite,6,6,14,Groceries,0.7574
+2026-06-15,SPEEDWAY 8912,40.59,Fuel,0,speedway,speedway,6,0,15,Fuel,0.8361
+2026-06-15,ETSY.COM,99.26,Shopping,0,etsy com,etsy,6,0,15,Shopping,0.8857
+2026-06-16,NETFLIX.COM,109.98,Entertainment,1,netflix com,netflix,6,1,16,Entertainment,0.8948
+2026-06-16,EBAY COMMERCE,85.72,Shopping,0,ebay commerce,ebay commerce,6,1,16,Shopping,0.8827
+2026-06-16,DUNKIN 349832,4.31,Dining,0,dunkin,dunkin,6,1,16,Dining,0.8728
+2026-06-17,WHOLE FOODS MARKET,120.93,Groceries,0,whole foods market,whole foods,6,2,17,Groceries,0.8276
+2026-06-18,ETSY.COM,34.35,Shopping,0,etsy com,etsy,6,3,18,Shopping,0.8857
+2026-06-18,COSTCO WHOLESALE,166.47,Groceries,0,costco wholesale,costco wholesale,6,3,18,Groceries,0.8857
+2026-06-18,STARBUCKS STORE 12931,13.64,Dining,0,starbucks store,starbucks,6,3,18,Dining,0.8092
+2026-06-18,SHELL OIL 88321,51.63,Fuel,0,shell oil,shell,6,3,18,Fuel,0.8847
+2026-06-19,SHOPRITE #441,97.86,Groceries,0,shoprite,shoprite,6,4,19,Groceries,0.7574
+2026-06-20,MCDONALDS F3812,12.95,Dining,0,mcdonalds f,mcdonalds,6,5,20,Dining,0.8766
+2026-06-20,COSTCO WHOLESALE,44.88,Groceries,0,costco wholesale,costco wholesale,6,5,20,Groceries,0.8857
+2026-06-20,TACO BELL 3982,16.12,Dining,0,taco bell,taco bell,6,5,20,Dining,0.861
+2026-06-20,EXXON 57291,39.31,Fuel,0,exxon,exxon,6,5,20,Fuel,0.8754
+2026-06-20,PANERA BREAD 2918,9.97,Dining,0,panera bread,panera bread,6,5,20,Dining,0.8521
+2026-06-21,SHELL OIL 88321,50.65,Fuel,0,shell oil,shell,6,6,21,Fuel,0.8847
+2026-06-21,ALDI #128,87.3,Groceries,0,aldi,aldi,6,6,21,Groceries,0.7881
+2026-06-21,BEST BUY 882,167.77,Shopping,0,best buy,best buy,6,6,21,Shopping,0.8555
+2026-06-21,CHEVRON 5812,55.65,Fuel,0,chevron,chevron,6,6,21,Fuel,0.9404
+2026-06-21,TARGET STORE 1192,79.71,Shopping,0,target store,target,6,6,21,Shopping,0.8032
+2026-06-22,WHOLE FOODS MARKET,121.53,Groceries,0,whole foods market,whole foods,6,0,22,Groceries,0.8276
+2026-06-22,PANERA BREAD 2918,19.3,Dining,0,panera bread,panera bread,6,0,22,Dining,0.8521
+2026-06-22,DISNEY PLUS,19.96,Entertainment,0,disney plus,disney plus,6,0,22,Entertainment,0.8426
+2026-06-22,MOBIL 29182,35.77,Fuel,0,mobil,mobil,6,0,22,Fuel,0.8379
+2026-06-23,DUNKIN 349832,5.98,Dining,0,dunkin,dunkin,6,1,23,Dining,0.8728
+2026-06-23,SPOTIFY USA,17.84,Entertainment,0,spotify usa,spotify,6,1,23,Entertainment,0.8853
+2026-06-24,TRADER JOES #551,96.33,Groceries,0,trader joes,trader joes,6,2,24,Groceries,0.8246
+2026-06-24,AMAZON MARKETPLACE,35.59,Shopping,0,amazon marketplace,amazon marketplace,6,2,24,Shopping,0.8586
+2026-06-24,CHIPOTLE 1432,16.84,Dining,0,chipotle,chipotle,6,2,24,Dining,0.8391
+2026-06-24,SPOTIFY USA,13.14,Entertainment,0,spotify usa,spotify,6,2,24,Entertainment,0.8853
+2026-06-25,ETSY.COM,52.06,Shopping,0,etsy com,etsy,6,3,25,Shopping,0.8857
+2026-06-25,MOBIL 29182,407.72,Fuel,1,mobil,mobil,6,3,25,Fuel,0.8379
+2026-06-25,DUNKIN 349832,9.8,Dining,0,dunkin,dunkin,6,3,25,Dining,0.8728
+2026-06-27,SPEEDWAY 8912,29.74,Fuel,0,speedway,speedway,6,5,27,Fuel,0.8361
+2026-06-27,SHELL OIL 88321,70.61,Fuel,0,shell oil,shell,6,5,27,Fuel,0.8847
+2026-06-27,TRADER JOES #551,39.19,Groceries,0,trader joes,trader joes,6,5,27,Groceries,0.8246
+2026-06-28,HULU,11.39,Entertainment,0,hulu,hulu,6,6,28,Entertainment,0.907
+2026-06-29,BP GAS STATION 2281,49.95,Fuel,0,bp gas station,bp,6,0,29,Fuel,0.8547
+2026-06-29,MOBIL 29182,37.56,Fuel,0,mobil,mobil,6,0,29,Fuel,0.8379
+2026-06-29,TARGET STORE 1192,19.99,Shopping,0,target store,target,6,0,29,Shopping,0.8032
+2026-06-30,CHIPOTLE 1432,10.61,Dining,0,chipotle,chipotle,6,1,30,Dining,0.8391
+2026-06-30,WHOLE FOODS MARKET,118.91,Groceries,0,whole foods market,whole foods,6,1,30,Groceries,0.8276
+2026-07-01,SHELL OIL 88321,42.8,Fuel,0,shell oil,shell,7,2,1,Fuel,0.8847
+2026-07-01,MOBIL 29182,31.81,Fuel,0,mobil,mobil,7,2,1,Fuel,0.8379
+2026-07-02,TACO BELL 3982,5.72,Dining,0,taco bell,taco bell,7,3,2,Dining,0.861
+2026-07-02,TACO BELL 3982,13.29,Dining,0,taco bell,taco bell,7,3,2,Dining,0.861
+2026-07-03,STARBUCKS STORE 12931,4.63,Dining,0,starbucks store,starbucks,7,4,3,Dining,0.8092
+2026-07-03,COSTCO WHOLESALE,107.56,Groceries,0,costco wholesale,costco wholesale,7,4,3,Groceries,0.8857
+2026-07-04,MOBIL 29182,52.72,Fuel,0,mobil,mobil,7,5,4,Fuel,0.8379
+2026-07-04,STARBUCKS STORE 12931,12.3,Dining,0,starbucks store,starbucks,7,5,4,Dining,0.8092
+2026-07-04,STARBUCKS STORE 12931,10.81,Dining,0,starbucks store,starbucks,7,5,4,Dining,0.8092
+2026-07-05,ETSY.COM,43.5,Shopping,0,etsy com,etsy,7,6,5,Shopping,0.8857
+2026-07-05,DUNKIN 349832,6.52,Dining,0,dunkin,dunkin,7,6,5,Dining,0.8728
+2026-07-05,SPEEDWAY 8912,36.1,Fuel,0,speedway,speedway,7,6,5,Fuel,0.8361
+2026-07-05,COSTCO WHOLESALE,104.79,Groceries,0,costco wholesale,costco wholesale,7,6,5,Groceries,0.8857
+2026-07-05,CHIPOTLE 1432,21.99,Dining,0,chipotle,chipotle,7,6,5,Dining,0.8391
+2026-07-05,MCDONALDS F3812,16.62,Dining,0,mcdonalds f,mcdonalds,7,6,5,Dining,0.8766
+2026-07-06,MCDONALDS F3812,6.02,Dining,0,mcdonalds f,mcdonalds,7,0,6,Dining,0.8766
+2026-07-07,PANERA BREAD 2918,20.03,Dining,0,panera bread,panera bread,7,1,7,Dining,0.8521
+2026-07-08,KROGER #912,32.4,Groceries,0,kroger,kroger,7,2,8,Groceries,0.7572
+2026-07-08,MCDONALDS F3812,9.97,Dining,0,mcdonalds f,mcdonalds,7,2,8,Dining,0.8766
+2026-07-08,WHOLE FOODS MARKET,137.32,Groceries,0,whole foods market,whole foods,7,2,8,Groceries,0.8276
+2026-07-09,CHEVRON 5812,42.52,Fuel,0,chevron,chevron,7,3,9,Fuel,0.9404
+2026-07-10,DUNKIN 349832,5.06,Dining,0,dunkin,dunkin,7,4,10,Dining,0.8728
+2026-07-10,AMZN MKTP US,95.51,Shopping,0,amzn mktp us,amazon,7,4,10,Shopping,0.8063
+2026-07-10,STARBUCKS STORE 12931,11.81,Dining,0,starbucks store,starbucks,7,4,10,Dining,0.8092
+2026-07-11,TACO BELL 3982,11.11,Dining,0,taco bell,taco bell,7,5,11,Dining,0.861
+2026-07-11,AMAZON MARKETPLACE,67.07,Shopping,0,amazon marketplace,amazon marketplace,7,5,11,Shopping,0.8586
+2026-07-11,AMZN MKTP US,92.35,Shopping,0,amzn mktp us,amazon,7,5,11,Shopping,0.8063
+2026-07-11,SHOPRITE #441,91.41,Groceries,0,shoprite,shoprite,7,5,11,Groceries,0.7574
+2026-07-12,MCDONALDS F3812,9.29,Dining,0,mcdonalds f,mcdonalds,7,6,12,Dining,0.8766
+2026-07-12,DUNKIN 349832,10.11,Dining,0,dunkin,dunkin,7,6,12,Dining,0.8728
+2026-07-12,AMZN MKTP US,25.43,Shopping,0,amzn mktp us,amazon,7,6,12,Shopping,0.8063
+2026-07-13,PANERA BREAD 2918,22.71,Dining,0,panera bread,panera bread,7,0,13,Dining,0.8521
+2026-07-13,ETSY.COM,98.16,Shopping,0,etsy com,etsy,7,0,13,Shopping,0.8857
+2026-07-13,MCDONALDS F3812,12.38,Dining,0,mcdonalds f,mcdonalds,7,0,13,Dining,0.8766
+2026-07-14,KROGER #912,71.93,Groceries,0,kroger,kroger,7,1,14,Groceries,0.7572
+2026-07-14,COSTCO WHOLESALE,114.14,Groceries,0,costco wholesale,costco wholesale,7,1,14,Groceries,0.8857
+2026-07-14,TARGET STORE 1192,109.46,Shopping,0,target store,target,7,1,14,Shopping,0.8032
+2026-07-14,STARBUCKS STORE 12931,4.49,Dining,0,starbucks store,starbucks,7,1,14,Dining,0.8092
+2026-07-15,EBAY COMMERCE,39.7,Shopping,0,ebay commerce,ebay commerce,7,2,15,Shopping,0.8827
+2026-07-15,MCDONALDS F3812,18.93,Dining,0,mcdonalds f,mcdonalds,7,2,15,Dining,0.8766
+2026-07-15,TRADER JOES #551,67.24,Groceries,0,trader joes,trader joes,7,2,15,Groceries,0.8246
+2026-07-16,SHOPRITE #441,65.32,Groceries,0,shoprite,shoprite,7,3,16,Groceries,0.7574
+2026-07-16,AMZN MKTP US,65.4,Shopping,0,amzn mktp us,amazon,7,3,16,Shopping,0.8063
+2026-07-16,STARBUCKS STORE 12931,9.0,Dining,0,starbucks store,starbucks,7,3,16,Dining,0.8092
+2026-07-16,CHIPOTLE 1432,13.47,Dining,0,chipotle,chipotle,7,3,16,Dining,0.8391
+2026-07-16,PANERA BREAD 2918,13.8,Dining,0,panera bread,panera bread,7,3,16,Dining,0.8521
+2026-07-17,STARBUCKS STORE 12931,8.82,Dining,0,starbucks store,starbucks,7,4,17,Dining,0.8092
+2026-07-17,MCDONALDS F3812,7.39,Dining,0,mcdonalds f,mcdonalds,7,4,17,Dining,0.8766
+2026-07-18,AMZN MKTP US,20.98,Shopping,0,amzn mktp us,amazon,7,5,18,Shopping,0.8063
+2026-07-18,EBAY COMMERCE,118.1,Shopping,0,ebay commerce,ebay commerce,7,5,18,Shopping,0.8827
+2026-07-18,WHOLE FOODS MARKET,35.34,Groceries,0,whole foods market,whole foods,7,5,18,Groceries,0.8276
+2026-07-18,ETSY.COM,45.23,Shopping,0,etsy com,etsy,7,5,18,Shopping,0.8857
+2026-07-19,ALDI #128,98.18,Groceries,0,aldi,aldi,7,6,19,Groceries,0.7881
+2026-07-19,CHIPOTLE 1432,12.1,Dining,0,chipotle,chipotle,7,6,19,Dining,0.8391
+2026-07-19,TRADER JOES #551,73.6,Groceries,0,trader joes,trader joes,7,6,19,Groceries,0.8246
+2026-07-19,CHIPOTLE 1432,15.44,Dining,0,chipotle,chipotle,7,6,19,Dining,0.8391
+2026-07-19,COSTCO WHOLESALE,48.33,Groceries,0,costco wholesale,costco wholesale,7,6,19,Groceries,0.8857
+2026-07-19,STARBUCKS STORE 12931,13.21,Dining,0,starbucks store,starbucks,7,6,19,Dining,0.8092
+2026-07-21,SPEEDWAY 8912,36.4,Fuel,0,speedway,speedway,7,1,21,Fuel,0.8361
+2026-07-21,DUNKIN 349832,7.32,Dining,0,dunkin,dunkin,7,1,21,Dining,0.8728
+2026-07-21,PANERA BREAD 2918,23.58,Dining,0,panera bread,panera bread,7,1,21,Dining,0.8521
+2026-07-21,BEST BUY 882,100.02,Shopping,0,best buy,best buy,7,1,21,Shopping,0.8555
+2026-07-22,STARBUCKS STORE 12931,9.3,Dining,0,starbucks store,starbucks,7,2,22,Dining,0.8092
+2026-07-22,WHOLE FOODS MARKET,62.0,Groceries,0,whole foods market,whole foods,7,2,22,Groceries,0.8276
+2026-07-22,MOBIL 29182,57.45,Fuel,0,mobil,mobil,7,2,22,Fuel,0.8379
+2026-07-23,SHOPRITE #441,96.99,Groceries,0,shoprite,shoprite,7,3,23,Groceries,0.7574
+2026-07-23,SHELL OIL 88321,42.89,Fuel,0,shell oil,shell,7,3,23,Fuel,0.8847
+2026-07-23,ALDI #128,99.64,Groceries,0,aldi,aldi,7,3,23,Groceries,0.7881
+2026-07-23,CHIPOTLE 1432,16.2,Dining,0,chipotle,chipotle,7,3,23,Dining,0.8391
+2026-07-23,TARGET STORE 1192,20.45,Shopping,0,target store,target,7,3,23,Shopping,0.8032
+2026-07-24,SHELL OIL 88321,65.19,Fuel,0,shell oil,shell,7,4,24,Fuel,0.8847
+2026-07-24,SPOTIFY USA,19.64,Entertainment,0,spotify usa,spotify,7,4,24,Entertainment,0.8853
+2026-07-24,SHOPRITE #441,91.62,Groceries,0,shoprite,shoprite,7,4,24,Groceries,0.7574
+2026-07-25,WHOLE FOODS MARKET,71.88,Groceries,0,whole foods market,whole foods,7,5,25,Groceries,0.8276
+2026-07-25,SHOPRITE #441,119.85,Groceries,0,shoprite,shoprite,7,5,25,Groceries,0.7574
+2026-07-25,PANERA BREAD 2918,21.24,Dining,0,panera bread,panera bread,7,5,25,Dining,0.8521
+2026-07-25,BP GAS STATION 2281,44.66,Fuel,0,bp gas station,bp,7,5,25,Fuel,0.8547
+2026-07-25,STARBUCKS STORE 12931,7.42,Dining,0,starbucks store,starbucks,7,5,25,Dining,0.8092
+2026-07-26,AMZN MKTP US,102.64,Shopping,0,amzn mktp us,amazon,7,6,26,Shopping,0.8063
+2026-07-26,STARBUCKS STORE 12931,6.41,Dining,0,starbucks store,starbucks,7,6,26,Dining,0.8092
+2026-07-27,DUNKIN 349832,8.16,Dining,0,dunkin,dunkin,7,0,27,Dining,0.8728
+2026-07-27,PANERA BREAD 2918,16.48,Dining,0,panera bread,panera bread,7,0,27,Dining,0.8521
+2026-07-27,MAX STREAMING,19.31,Entertainment,0,max streaming,max streaming,7,0,27,Entertainment,0.9204
+2026-07-27,AMAZON MARKETPLACE,17.66,Shopping,0,amazon marketplace,amazon marketplace,7,0,27,Shopping,0.8586
+2026-07-27,EBAY COMMERCE,114.3,Shopping,0,ebay commerce,ebay commerce,7,0,27,Shopping,0.8827
+2026-07-28,ALDI #128,77.42,Groceries,0,aldi,aldi,7,1,28,Groceries,0.7881
+2026-07-28,APPLE MUSIC,12.34,Entertainment,0,apple music,apple music,7,1,28,Entertainment,0.8728
+2026-07-28,COSTCO WHOLESALE,105.1,Groceries,0,costco wholesale,costco wholesale,7,1,28,Groceries,0.8857
+2026-07-28,AMZN MKTP US,41.71,Shopping,0,amzn mktp us,amazon,7,1,28,Shopping,0.8063
+2026-07-28,AMZN MKTP US,118.06,Shopping,0,amzn mktp us,amazon,7,1,28,Shopping,0.8063
+2026-07-29,EXXON 57291,74.97,Fuel,0,exxon,exxon,7,2,29,Fuel,0.8754
+2026-07-30,BEST BUY 882,88.16,Shopping,0,best buy,best buy,7,3,30,Shopping,0.8555
+2026-07-30,TRADER JOES #551,41.37,Groceries,0,trader joes,trader joes,7,3,30,Groceries,0.8246
+2026-07-30,WHOLE FOODS MARKET,83.49,Groceries,0,whole foods market,whole foods,7,3,30,Groceries,0.8276
+2026-07-30,DUNKIN 349832,10.32,Dining,0,dunkin,dunkin,7,3,30,Dining,0.8728

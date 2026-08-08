@@ -1,0 +1,10 @@
+{
+  "transaction_count": 500,
+  "total_spending": 26443.22,
+  "average_transaction": 52.89,
+  "median_transaction": 39.51,
+  "largest_transaction": 434.13,
+  "anomaly_count": 10,
+  "anomaly_rate": 0.02,
+  "anomalous_spending": 2311.75
+}

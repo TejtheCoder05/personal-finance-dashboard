@@ -1,0 +1,13 @@
+{
+  "model_type": "SentenceTransformer embeddings + LogisticRegression",
+  "embedding_model": "all-MiniLM-L6-v2",
+  "training_rows": 500,
+  "categories": [
+    "Dining",
+    "Entertainment",
+    "Fuel",
+    "Groceries",
+    "Shopping"
+  ],
+  "holdout_accuracy": 1.0
+}
