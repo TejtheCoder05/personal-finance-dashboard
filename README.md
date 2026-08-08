@@ -444,6 +444,12 @@ Inside `frontend/`, create a `.env.local` file containing:
 NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
 ```
 
+The session cookie is `SameSite=Lax`, so the browser only stores and returns it
+when the API shares a site with the page. Ports are irrelevant to cookies, but
+hostnames are not: `localhost` and `127.0.0.1` count as **different sites**.
+Browse the dashboard on the same hostname configured here, otherwise logging in
+returns 200 and the very next request is still a 401.
+
 ### 6. Install frontend dependencies
 
 ```bash
@@ -457,10 +463,10 @@ npm install
 npm run dev
 ```
 
-Open:
+Open the dashboard on the same hostname as `NEXT_PUBLIC_API_URL`:
 
 ```text
-http://localhost:3000
+http://127.0.0.1:3000
 ```
 
 ---

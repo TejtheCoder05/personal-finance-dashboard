@@ -85,11 +85,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       register: async (email, password) => {
         try {
           await registerUser(email, password);
+        } catch (error) {
+          throw new Error(safeAuthMessage(error, "register"));
+        }
+        // The account exists from here on, so a failure below is a session
+        // problem and must not be reported as a failed registration.
+        try {
           await loginUser(email, password);
           setUser(await getCurrentUser());
           setSessionError(null);
-        } catch (error) {
-          throw new Error(safeAuthMessage(error, "register"));
+        } catch {
+          throw new Error(
+            "Your account was created, but signing you in failed. Try logging in.",
+          );
         }
       },
       logout: async () => {
