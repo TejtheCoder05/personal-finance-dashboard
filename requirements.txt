@@ -9,3 +9,6 @@ python-multipart==0.0.22
 SQLAlchemy==2.0.51
 psycopg[binary]==3.3.4
 alembic==1.18.5
+pwdlib[argon2]==0.3.0
+PyJWT==2.13.0
+email-validator==2.3.0

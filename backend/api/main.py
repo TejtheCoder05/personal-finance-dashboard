@@ -13,6 +13,7 @@ from backend.api.imports import (
     inspect_transaction_csv,
     process_upload,
 )
+from backend.auth.router import router as auth_router
 
 
 # ---------------------------------------------------------
@@ -100,6 +101,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(auth_router)
 
 
 # ---------------------------------------------------------

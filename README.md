@@ -278,6 +278,9 @@ The FastAPI backend exposes the following endpoints:
 | POST   | `/api/imports`      | Import a temporary CSV   |
 | POST   | `/api/imports/validate` | Preview and map a CSV |
 | DELETE | `/api/imports/{dataset_id}` | Remove temporary data |
+| POST   | `/api/auth/register` | Create a user account |
+| POST   | `/api/auth/login` | Issue a JWT access token |
+| GET    | `/api/auth/me` | Return the authenticated user |
 
 The transaction endpoint supports:
 
@@ -374,8 +377,24 @@ alembic current
 psql -U financeiq_user -d financeiq -c '\d users'
 ```
 
-The initial migration creates only the `users` table in preparation for a
-later authentication phase. No current endpoint reads from or writes to it.
+The initial migration creates the `users` table used by backend authentication.
+
+Generate a strong local JWT secret and add it to `.env` together with the
+token lifetime:
+
+```bash
+openssl rand -hex 32
+```
+
+```env
+JWT_SECRET_KEY=paste_the_generated_value_here
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+```
+
+Registration accepts JSON containing `email` and `password`. Login follows
+the OAuth2 password form convention: place the email in the `username` field
+and the password in the `password` field. Protected requests use
+`Authorization: Bearer <access_token>`.
 
 ### 5. Configure the frontend
 
@@ -487,6 +506,7 @@ The current frontend passes:
 
 ```bash
 python -m pip check
+python -m unittest backend.tests.test_auth -v
 ```
 
 ---
@@ -517,7 +537,7 @@ The anomaly model was not further tuned using its holdout results.
 * Category-classification evaluation uses a controlled merchant catalog.
 * CSV uploads are temporary and are not persisted across backend restarts.
 * The application does not currently connect directly to financial institutions.
-* Authentication and multi-user account support are not implemented.
+* Frontend authentication and persistent per-user finance data are not implemented.
 * Model behavior has not yet been evaluated on large-scale real-world transaction data.
 
 ---
