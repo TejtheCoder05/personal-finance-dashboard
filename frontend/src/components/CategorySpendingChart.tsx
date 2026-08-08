@@ -11,6 +11,7 @@ import {
 
 import { getCategorySpending } from "@/lib/api";
 import type { CategorySpending } from "@/types/finance";
+import { useDataSource } from "@/components/DataSourceProvider";
 
 const COLORS = [
   "#10b981",
@@ -33,6 +34,7 @@ const compactCurrencyFormatter = new Intl.NumberFormat("en-US", {
 });
 
 export default function CategorySpendingChart() {
+  const { dataset } = useDataSource();
   const [data, setData] = useState<CategorySpending[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +45,7 @@ export default function CategorySpendingChart() {
         setLoading(true);
         setError(null);
 
-        const categoryData = await getCategorySpending();
+        const categoryData = await getCategorySpending(dataset?.dataset_id);
         setData(categoryData);
       } catch (err) {
         console.error(err);
@@ -54,7 +56,7 @@ export default function CategorySpendingChart() {
     }
 
     loadCategorySpending();
-  }, []);
+  }, [dataset?.dataset_id]);
 
   if (loading) {
     return (

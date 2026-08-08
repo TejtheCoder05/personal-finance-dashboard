@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { getSpendingSummary } from "@/lib/api";
 import type { SpendingSummary } from "@/types/finance";
+import { useDataSource } from "@/components/DataSourceProvider";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -13,6 +14,7 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 const numberFormatter = new Intl.NumberFormat("en-US");
 
 export default function SummaryCards() {
+  const { dataset } = useDataSource();
   const [summary, setSummary] = useState<SpendingSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +25,7 @@ export default function SummaryCards() {
         setLoading(true);
         setError(null);
 
-        const data = await getSpendingSummary();
+        const data = await getSpendingSummary(dataset?.dataset_id);
         setSummary(data);
       } catch (err) {
         console.error(err);
@@ -36,7 +38,7 @@ export default function SummaryCards() {
     }
 
     loadSummary();
-  }, []);
+  }, [dataset?.dataset_id]);
 
   if (loading) {
     return (

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { getAnomalies } from "@/lib/api";
 import type { AnomalyTransaction } from "@/types/finance";
+import { useDataSource } from "@/components/DataSourceProvider";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -42,6 +43,7 @@ function getScoreStyle(score: number) {
 }
 
 export default function AnomalyAlerts() {
+  const { dataset } = useDataSource();
   const [anomalies, setAnomalies] = useState<AnomalyTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +54,7 @@ export default function AnomalyAlerts() {
         setLoading(true);
         setError(null);
 
-        const data = await getAnomalies();
+        const data = await getAnomalies(dataset?.dataset_id);
         setAnomalies(data);
       } catch (err) {
         console.error(err);
@@ -63,7 +65,7 @@ export default function AnomalyAlerts() {
     }
 
     loadAnomalies();
-  }, []);
+  }, [dataset?.dataset_id]);
 
   if (loading) {
     return (

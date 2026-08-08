@@ -59,3 +59,17 @@ export interface Transaction {
   anomaly_score: number;
   anomaly_reason: string | null;
 }
+
+export type AmountSign = "purchase_positive" | "purchase_negative";
+
+export interface ImportResult {
+  dataset_id: string;
+  filename: string;
+  transaction_count: number;
+  column_mapping: {
+    date: string;
+    description: string;
+    amount: string;
+  };
+  storage: "temporary";
+}

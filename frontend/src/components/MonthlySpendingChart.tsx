@@ -13,6 +13,7 @@ import {
 
 import { getMonthlySpending } from "@/lib/api";
 import type { MonthlySpending } from "@/types/finance";
+import { useDataSource } from "@/components/DataSourceProvider";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -34,6 +35,7 @@ function formatMonth(month: string) {
 }
 
 export default function MonthlySpendingChart() {
+  const { dataset } = useDataSource();
   const [data, setData] = useState<MonthlySpending[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +46,7 @@ export default function MonthlySpendingChart() {
         setLoading(true);
         setError(null);
 
-        const monthlyData = await getMonthlySpending();
+        const monthlyData = await getMonthlySpending(dataset?.dataset_id);
         setData(monthlyData);
       } catch (err) {
         console.error(err);
@@ -58,7 +60,7 @@ export default function MonthlySpendingChart() {
     }
 
     loadMonthlySpending();
-  }, []);
+  }, [dataset?.dataset_id]);
 
   if (loading) {
     return (

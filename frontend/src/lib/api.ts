@@ -5,6 +5,8 @@ import type {
   MonthlySpending,
   SpendingSummary,
   Transaction,
+  AmountSign,
+  ImportResult,
 } from "@/types/finance";
 
 const API_BASE_URL =
@@ -14,38 +16,49 @@ async function fetchApi<T>(endpoint: string): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${endpoint}`);
 
   if (!response.ok) {
-    throw new Error(
-      `API request failed: ${response.status} ${response.statusText}`,
-    );
+    const errorBody = (await response.json().catch(() => null)) as {
+      detail?: string;
+    } | null;
+    throw new Error(errorBody?.detail ?? `API request failed: ${response.status}`);
   }
 
   return response.json();
 }
 
-export function getSpendingSummary(): Promise<SpendingSummary> {
-  return fetchApi<SpendingSummary>("/api/summary");
+function withDataset(endpoint: string, datasetId?: string): string {
+  if (!datasetId) {
+    return endpoint;
+  }
+
+  const separator = endpoint.includes("?") ? "&" : "?";
+  return `${endpoint}${separator}dataset_id=${encodeURIComponent(datasetId)}`;
 }
 
-export function getMonthlySpending(): Promise<MonthlySpending[]> {
-  return fetchApi<MonthlySpending[]>("/api/monthly");
+export function getSpendingSummary(datasetId?: string): Promise<SpendingSummary> {
+  return fetchApi<SpendingSummary>(withDataset("/api/summary", datasetId));
 }
 
-export function getCategorySpending(): Promise<CategorySpending[]> {
-  return fetchApi<CategorySpending[]>("/api/categories");
+export function getMonthlySpending(datasetId?: string): Promise<MonthlySpending[]> {
+  return fetchApi<MonthlySpending[]>(withDataset("/api/monthly", datasetId));
 }
 
-export function getMerchantSpending(): Promise<MerchantSpending[]> {
-  return fetchApi<MerchantSpending[]>("/api/merchants");
+export function getCategorySpending(datasetId?: string): Promise<CategorySpending[]> {
+  return fetchApi<CategorySpending[]>(withDataset("/api/categories", datasetId));
 }
 
-export function getAnomalies(): Promise<AnomalyTransaction[]> {
-  return fetchApi<AnomalyTransaction[]>("/api/anomalies");
+export function getMerchantSpending(datasetId?: string): Promise<MerchantSpending[]> {
+  return fetchApi<MerchantSpending[]>(withDataset("/api/merchants", datasetId));
+}
+
+export function getAnomalies(datasetId?: string): Promise<AnomalyTransaction[]> {
+  return fetchApi<AnomalyTransaction[]>(withDataset("/api/anomalies", datasetId));
 }
 
 interface TransactionFilters {
   limit?: number;
   category?: string;
   anomaliesOnly?: boolean;
+  datasetId?: string;
 }
 
 export function getTransactions(
@@ -65,6 +78,10 @@ export function getTransactions(
     params.set("anomalies_only", "true");
   }
 
+  if (filters.datasetId) {
+    params.set("dataset_id", filters.datasetId);
+  }
+
   const queryString = params.toString();
 
   const endpoint = queryString
@@ -72,4 +89,27 @@ export function getTransactions(
     : "/api/transactions";
 
   return fetchApi<Transaction[]>(endpoint);
+}
+
+export async function importTransactions(
+  file: File,
+  amountSign: AmountSign,
+): Promise<ImportResult> {
+  const formData = new FormData();
+  formData.set("file", file);
+  formData.set("amount_sign", amountSign);
+
+  const response = await fetch(`${API_BASE_URL}/api/imports`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorBody = (await response.json().catch(() => null)) as {
+      detail?: string;
+    } | null;
+    throw new Error(errorBody?.detail ?? `Upload failed: ${response.status}`);
+  }
+
+  return response.json();
 }

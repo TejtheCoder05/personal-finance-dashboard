@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { getTransactions } from "@/lib/api";
 import type { Transaction } from "@/types/finance";
+import { useDataSource } from "@/components/DataSourceProvider";
 
 const categories = [
   "All",
@@ -62,6 +63,7 @@ function getCategoryStyle(category: string) {
 }
 
 export default function RecentTransactions() {
+  const { dataset } = useDataSource();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [category, setCategory] = useState("All");
   const [anomaliesOnly, setAnomaliesOnly] = useState(false);
@@ -80,6 +82,7 @@ export default function RecentTransactions() {
           limit,
           category: category === "All" ? undefined : category,
           anomaliesOnly,
+          datasetId: dataset?.dataset_id,
         });
 
         setTransactions(data);
@@ -92,7 +95,7 @@ export default function RecentTransactions() {
     }
 
     loadTransactions();
-  }, [category, anomaliesOnly, limit]);
+  }, [category, anomaliesOnly, limit, dataset?.dataset_id]);
 
   return (
     <div>

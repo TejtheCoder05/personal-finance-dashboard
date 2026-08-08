@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { getMerchantSpending } from "@/lib/api";
 import type { MerchantSpending } from "@/types/finance";
+import { useDataSource } from "@/components/DataSourceProvider";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -21,6 +22,7 @@ function formatMerchantName(merchant: string) {
 }
 
 export default function TopMerchants() {
+  const { dataset } = useDataSource();
   const [merchants, setMerchants] = useState<MerchantSpending[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +33,7 @@ export default function TopMerchants() {
         setLoading(true);
         setError(null);
 
-        const data = await getMerchantSpending();
+        const data = await getMerchantSpending(dataset?.dataset_id);
         setMerchants(data);
       } catch (err) {
         console.error(err);
@@ -42,7 +44,7 @@ export default function TopMerchants() {
     }
 
     loadMerchants();
-  }, []);
+  }, [dataset?.dataset_id]);
 
   if (loading) {
     return (

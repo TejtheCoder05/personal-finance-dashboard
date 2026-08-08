@@ -5,6 +5,7 @@ import RecentTransactions from "@/components/RecentTransactions";
 import SummaryCards from "@/components/SummaryCards";
 import TopMerchants from "@/components/TopMerchants";
 import MobileHeader from "@/components/MobileHeader";
+import DataSourceControls from "@/components/DataSourceControls";
 
 const navigation = [
   "Overview",
@@ -111,6 +112,7 @@ export default function Home() {
     ML-powered spending insights and transaction monitoring
   </p>
 </div>
+          <DataSourceControls />
           <section>
             <div className="mb-5 flex items-end justify-between">
               <div>

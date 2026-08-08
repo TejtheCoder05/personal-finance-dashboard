@@ -85,6 +85,8 @@ The responsive dashboard includes:
 * Category filtering
 * Anomaly-only filtering
 * Transaction-limit controls
+* CSV upload with explicit purchase-sign handling
+* Demo Mode and uploaded-data switching
 * Loading states
 * API error states
 
@@ -206,9 +208,9 @@ personal-finance-dashboard/
 
 ## Dataset
 
-FinanceIQ currently uses synthetic financial transaction data generated specifically for development and evaluation.
+FinanceIQ includes synthetic financial transaction data generated specifically for development and evaluation.
 
-The project includes:
+The built-in demo includes:
 
 * 500 development transactions
 * 500 separate holdout transactions
@@ -216,6 +218,10 @@ The project includes:
 * Merchant, category, amount, and transaction-description variation
 
 Using synthetic data keeps the repository free of real personal financial data and personally identifiable transaction information.
+
+Users can also upload a bank or credit-card CSV from the dashboard. Uploaded
+transactions are processed temporarily in memory and are not written into the
+repository or used to retrain the saved models.
 
 ---
 
