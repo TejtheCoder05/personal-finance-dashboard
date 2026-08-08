@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.api.imports import (
     ImportValidationError,
     get_imported_dataset,
+    inspect_transaction_csv,
     process_upload,
 )
 
@@ -412,6 +413,9 @@ def get_transactions(
 async def import_transactions(
     file: UploadFile = File(...),
     amount_sign: str | None = Form(default=None),
+    date_column: str | None = Form(default=None),
+    description_column: str | None = Form(default=None),
+    amount_column: str | None = Form(default=None),
 ):
     """Validate and temporarily process a bank transaction CSV."""
 
@@ -426,6 +430,9 @@ async def import_transactions(
             content,
             filename=filename,
             amount_sign=amount_sign,
+            date_column=date_column,
+            description_column=description_column,
+            amount_column=amount_column,
         )
     except ImportValidationError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
@@ -442,3 +449,21 @@ async def import_transactions(
         "column_mapping": mapping,
         "storage": "temporary",
     }
+
+
+@app.post("/api/imports/validate")
+async def validate_transaction_import(file: UploadFile = File(...)):
+    """Inspect a CSV and suggest canonical transaction column mappings."""
+
+    filename = file.filename or "transactions.csv"
+    if not filename.lower().endswith(".csv"):
+        raise HTTPException(status_code=415, detail="Only .csv files are supported.")
+
+    content = await file.read()
+    await file.close()
+    try:
+        inspection = inspect_transaction_csv(content)
+    except ImportValidationError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    return {"filename": filename, **inspection}

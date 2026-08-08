@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from io import BytesIO
+import json
 from threading import Lock
 from uuid import uuid4
 
@@ -63,11 +64,9 @@ def _find_column(columns: dict[str, str], aliases: tuple[str, ...]) -> str | Non
     return matches[0] if matches else None
 
 
-def parse_transaction_csv(
-    content: bytes,
-    *,
-    amount_sign: str | None,
-) -> tuple[pd.DataFrame, dict[str, str]]:
+def _read_csv(content: bytes) -> pd.DataFrame:
+    """Apply upload limits and parse CSV bytes without persisting them."""
+
     if not content:
         raise ImportValidationError("The uploaded CSV is empty.")
     if len(content) > MAX_UPLOAD_BYTES:
@@ -86,12 +85,90 @@ def parse_transaction_csv(
         raise ImportValidationError(
             f"The CSV exceeds the {MAX_TRANSACTION_ROWS:,}-transaction limit."
         )
+    if len(raw.columns) > 100:
+        raise ImportValidationError("The CSV exceeds the 100-column limit.")
+
+    _normalized_columns(raw)
+    return raw
+
+
+def _suggest_column(
+    columns: dict[str, str],
+    aliases: tuple[str, ...],
+) -> str | None:
+    matches = [columns[alias] for alias in aliases if alias in columns]
+    return matches[0] if len(matches) == 1 else None
+
+
+def inspect_transaction_csv(content: bytes) -> dict:
+    """Return safe metadata and suggestions before an import is processed."""
+
+    raw = _read_csv(content)
+    columns = _normalized_columns(raw)
+    date_column = _suggest_column(columns, DATE_ALIASES)
+    description_column = _suggest_column(columns, DESCRIPTION_ALIASES)
+    amount_column = _suggest_column(columns, AMOUNT_ALIASES + DEBIT_ALIASES)
+
+    warnings = []
+    if not date_column:
+        warnings.append("Confirm which column contains the transaction date.")
+    if not description_column:
+        warnings.append("Confirm which column contains the merchant or description.")
+    if not amount_column:
+        warnings.append("Confirm which column contains the purchase amount.")
+
+    return {
+        "columns": [str(column) for column in raw.columns],
+        "row_count": len(raw),
+        "suggested_mapping": {
+            "date": date_column,
+            "description": description_column,
+            "amount": amount_column,
+        },
+        "preview": json.loads(raw.head(3).to_json(orient="records")),
+        "warnings": warnings,
+    }
+
+
+def _selected_column(raw: pd.DataFrame, selected: str, field: str) -> str:
+    if selected not in raw.columns:
+        raise ImportValidationError(
+            f"The selected {field} column '{selected}' was not found in the CSV."
+        )
+    return selected
+
+
+def parse_transaction_csv(
+    content: bytes,
+    *,
+    amount_sign: str | None,
+    date_column: str | None = None,
+    description_column: str | None = None,
+    amount_column: str | None = None,
+) -> tuple[pd.DataFrame, dict[str, str]]:
+    raw = _read_csv(content)
 
     columns = _normalized_columns(raw)
-    date_column = _find_column(columns, DATE_ALIASES)
-    description_column = _find_column(columns, DESCRIPTION_ALIASES)
-    amount_column = _find_column(columns, AMOUNT_ALIASES)
-    debit_column = _find_column(columns, DEBIT_ALIASES)
+    explicit_mapping = any((date_column, description_column, amount_column))
+    if explicit_mapping:
+        if not all((date_column, description_column, amount_column)):
+            raise ImportValidationError(
+                "Date, description, and amount mappings must all be provided."
+            )
+        date_column = _selected_column(raw, date_column, "date")
+        description_column = _selected_column(raw, description_column, "description")
+        source_amount = _selected_column(raw, amount_column, "amount")
+        debit_column = (
+            source_amount
+            if " ".join(source_amount.strip().lower().split()) in DEBIT_ALIASES
+            else None
+        )
+        amount_column = None if debit_column else source_amount
+    else:
+        date_column = _find_column(columns, DATE_ALIASES)
+        description_column = _find_column(columns, DESCRIPTION_ALIASES)
+        amount_column = _find_column(columns, AMOUNT_ALIASES)
+        debit_column = _find_column(columns, DEBIT_ALIASES)
 
     if not date_column or not description_column:
         raise ImportValidationError(
@@ -151,8 +228,17 @@ def process_upload(
     *,
     filename: str,
     amount_sign: str | None,
+    date_column: str | None = None,
+    description_column: str | None = None,
+    amount_column: str | None = None,
 ) -> tuple[ImportedDataset, dict[str, str]]:
-    canonical, mapping = parse_transaction_csv(content, amount_sign=amount_sign)
+    canonical, mapping = parse_transaction_csv(
+        content,
+        amount_sign=amount_sign,
+        date_column=date_column,
+        description_column=description_column,
+        amount_column=amount_column,
+    )
     cleaned = clean_transactions(canonical)
     if cleaned.empty:
         raise ImportValidationError(

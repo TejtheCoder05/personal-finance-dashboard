@@ -267,6 +267,7 @@ The FastAPI backend exposes the following endpoints:
 | GET    | `/api/anomalies`    | Detected anomalies       |
 | GET    | `/api/transactions` | Transaction records      |
 | POST   | `/api/imports`      | Import a temporary CSV   |
+| POST   | `/api/imports/validate` | Preview and map a CSV |
 
 The transaction endpoint supports:
 
