@@ -9,19 +9,36 @@ import type {
   CsvColumnMapping,
   CsvValidationResult,
   ImportResult,
+  AuthUser,
 } from "@/types/finance";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+  ) {
+    super(message);
+  }
+}
+
+async function responseError(response: Response, fallback: string): Promise<ApiError> {
+  const errorBody = (await response.json().catch(() => null)) as {
+    detail?: unknown;
+  } | null;
+  const detail = typeof errorBody?.detail === "string" ? errorBody.detail : fallback;
+  return new ApiError(detail, response.status);
+}
+
 async function fetchApi<T>(endpoint: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`);
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    credentials: "include",
+  });
 
   if (!response.ok) {
-    const errorBody = (await response.json().catch(() => null)) as {
-      detail?: string;
-    } | null;
-    throw new Error(errorBody?.detail ?? `API request failed: ${response.status}`);
+    throw await responseError(response, `API request failed: ${response.status}`);
   }
 
   return response.json();
@@ -110,13 +127,11 @@ export async function importTransactions(
   const response = await fetch(`${API_BASE_URL}/api/imports`, {
     method: "POST",
     body: formData,
+    credentials: "include",
   });
 
   if (!response.ok) {
-    const errorBody = (await response.json().catch(() => null)) as {
-      detail?: string;
-    } | null;
-    throw new Error(errorBody?.detail ?? `Upload failed: ${response.status}`);
+    throw await responseError(response, `Upload failed: ${response.status}`);
   }
 
   return response.json();
@@ -131,13 +146,11 @@ export async function validateTransactionCsv(
   const response = await fetch(`${API_BASE_URL}/api/imports/validate`, {
     method: "POST",
     body: formData,
+    credentials: "include",
   });
 
   if (!response.ok) {
-    const errorBody = (await response.json().catch(() => null)) as {
-      detail?: string;
-    } | null;
-    throw new Error(errorBody?.detail ?? `Validation failed: ${response.status}`);
+    throw await responseError(response, `Validation failed: ${response.status}`);
   }
 
   return response.json();
@@ -146,10 +159,50 @@ export async function validateTransactionCsv(
 export async function deleteImportedDataset(datasetId: string): Promise<void> {
   const response = await fetch(
     `${API_BASE_URL}/api/imports/${encodeURIComponent(datasetId)}`,
-    { method: "DELETE" },
+    { method: "DELETE", credentials: "include" },
   );
 
   if (!response.ok && response.status !== 404) {
     throw new Error(`Could not remove uploaded data: ${response.status}`);
+  }
+}
+
+export async function registerUser(email: string, password: string): Promise<AuthUser> {
+  const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ email, password }),
+  });
+  if (!response.ok) {
+    throw await responseError(response, "Could not create your account.");
+  }
+  return response.json();
+}
+
+export async function loginUser(email: string, password: string): Promise<void> {
+  const formData = new URLSearchParams({ username: email, password });
+  const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    credentials: "include",
+    body: formData,
+  });
+  if (!response.ok) {
+    throw await responseError(response, "Incorrect email or password.");
+  }
+}
+
+export function getCurrentUser(): Promise<AuthUser> {
+  return fetchApi<AuthUser>("/api/auth/me");
+}
+
+export async function logoutUser(): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw await responseError(response, "Could not log out.");
   }
 }

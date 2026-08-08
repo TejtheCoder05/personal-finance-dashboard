@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import AuthControls from "@/components/AuthControls";
 
 const navigation = [
   "Overview",
@@ -109,6 +110,9 @@ export default function MobileHeader() {
                   ML pipeline ready
                 </p>
               </div>
+            </div>
+            <div className="mt-3 border-t border-gray-100 pt-3">
+              <AuthControls compact />
             </div>
           </nav>
         )}

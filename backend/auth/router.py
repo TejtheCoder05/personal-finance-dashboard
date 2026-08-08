@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import EmailStr, TypeAdapter, ValidationError
 from sqlalchemy import select
@@ -11,7 +11,9 @@ from backend.auth.dependencies import CurrentUser
 from backend.auth.schemas import TokenResponse, UserCreate, UserResponse
 from backend.auth.security import (
     DUMMY_PASSWORD_HASH,
+    AUTH_COOKIE_NAME,
     create_access_token,
+    get_auth_cookie_secure,
     get_access_token_expire_minutes,
     hash_password,
     verify_password,
@@ -64,6 +66,7 @@ def register_user(
 
 @router.post("/login", response_model=TokenResponse)
 def login_user(
+    response: Response,
     form: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[Session, Depends(get_db)],
 ) -> TokenResponse:
@@ -85,8 +88,18 @@ def login_user(
         )
 
     expires_in = get_access_token_expire_minutes() * 60
+    access_token = create_access_token(user.id)
+    response.set_cookie(
+        key=AUTH_COOKIE_NAME,
+        value=access_token,
+        max_age=expires_in,
+        httponly=True,
+        secure=get_auth_cookie_secure(),
+        samesite="lax",
+        path="/",
+    )
     return TokenResponse(
-        access_token=create_access_token(user.id),
+        access_token=access_token,
         expires_in=expires_in,
     )
 
@@ -94,3 +107,14 @@ def login_user(
 @router.get("/me", response_model=UserResponse)
 def get_authenticated_user(current_user: CurrentUser) -> User:
     return current_user
+
+
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+def logout_user(response: Response) -> None:
+    response.delete_cookie(
+        key=AUTH_COOKIE_NAME,
+        httponly=True,
+        secure=get_auth_cookie_secure(),
+        samesite="lax",
+        path="/",
+    )

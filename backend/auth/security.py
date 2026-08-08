@@ -13,6 +13,7 @@ from pwdlib.exceptions import UnknownHashError
 ALGORITHM = "HS256"
 DEFAULT_ACCESS_TOKEN_EXPIRE_MINUTES = 30
 JWT_SECRET_PLACEHOLDER = "replace_me_with_a_random_64_character_secret"
+AUTH_COOKIE_NAME = "financeiq_access_token"
 
 password_hash = PasswordHash.recommended()
 DUMMY_PASSWORD_HASH = password_hash.hash("financeiq-dummy-password")
@@ -42,6 +43,13 @@ def get_access_token_expire_minutes() -> int:
             "ACCESS_TOKEN_EXPIRE_MINUTES must be between 1 and 1440."
         )
     return minutes
+
+
+def get_auth_cookie_secure() -> bool:
+    raw_value = os.getenv("AUTH_COOKIE_SECURE", "false").strip().lower()
+    if raw_value not in {"true", "false"}:
+        raise RuntimeError("AUTH_COOKIE_SECURE must be 'true' or 'false'.")
+    return raw_value == "true"
 
 
 def hash_password(password: str) -> str:

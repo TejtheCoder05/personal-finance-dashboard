@@ -96,3 +96,10 @@ export interface SavingsGoal {
   currentAmount: number;
   targetDate: string | null;
 }
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  created_at: string;
+  updated_at: string;
+}

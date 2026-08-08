@@ -93,6 +93,7 @@ class AuthenticationTests(unittest.TestCase):
         self.assertEqual(body["token_type"], "bearer")
         self.assertTrue(body["access_token"])
         self.assertEqual(body["expires_in"], 1800)
+        self.assertIn("financeiq_access_token", response.cookies)
 
     def test_incorrect_password_uses_generic_error(self) -> None:
         email = self.unique_email()
@@ -144,6 +145,19 @@ class AuthenticationTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["email"], email)
         self.assertNotIn("hashed_password", response.json())
+
+    def test_cookie_session_and_logout(self) -> None:
+        email = self.unique_email()
+        self.assertEqual(self.register(email).status_code, 201)
+        self.assertEqual(self.login(email).status_code, 200)
+
+        authenticated = self.client.get("/api/auth/me")
+        self.assertEqual(authenticated.status_code, 200)
+        self.assertEqual(authenticated.json()["email"], email)
+
+        logout = self.client.post("/api/auth/logout")
+        self.assertEqual(logout.status_code, 204)
+        self.assertEqual(self.client.get("/api/auth/me").status_code, 401)
 
     def test_me_without_token_is_rejected(self) -> None:
         response = self.client.get("/api/auth/me")

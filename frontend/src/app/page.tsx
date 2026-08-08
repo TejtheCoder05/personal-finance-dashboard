@@ -7,6 +7,7 @@ import TopMerchants from "@/components/TopMerchants";
 import MobileHeader from "@/components/MobileHeader";
 import DataSourceControls from "@/components/DataSourceControls";
 import SavingsGoals from "@/components/SavingsGoals";
+import AuthControls from "@/components/AuthControls";
 
 const navigation = [
   "Overview",
@@ -93,12 +94,12 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="hidden items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-2 sm:flex">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
-
-              <span className="text-xs font-medium text-gray-600">
-                API Connected
-              </span>
+            <div className="flex items-center gap-4">
+              <div className="hidden items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-2 xl:flex">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                <span className="text-xs font-medium text-gray-600">API Connected</span>
+              </div>
+              <AuthControls />
             </div>
           </div>
         </header>
