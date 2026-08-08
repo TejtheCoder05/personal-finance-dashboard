@@ -113,6 +113,10 @@ The interface is designed for both desktop and mobile devices.
 * Python 3.12
 * Pandas
 * NumPy
+* PostgreSQL
+* SQLAlchemy 2
+* psycopg 3
+* Alembic
 
 ### Machine Learning
 
@@ -189,6 +193,10 @@ personal-finance-dashboard/
 │   │   ├── anomaly_detector_metadata.json
 │   │   ├── category_classifier.joblib
 │   │   └── category_classifier_metadata.json
+│   ├── db/
+│   │   ├── database.py
+│   │   ├── models.py
+│   │   └── migrations/
 │   └── pipeline/
 │       ├── clean.py
 │       ├── ingest.py
@@ -333,6 +341,41 @@ Swagger documentation:
 ```text
 http://127.0.0.1:8000/docs
 ```
+
+The existing Demo Mode and temporary CSV workflow do not require a database.
+
+### PostgreSQL database foundation
+
+Database-backed features use `DATABASE_URL`. FinanceIQ does not provide a
+SQLite fallback and does not create tables during application startup.
+
+After installing and starting PostgreSQL, create a development role and
+database:
+
+```bash
+createuser --createdb --pwprompt financeiq_user
+createdb --owner=financeiq_user financeiq
+```
+
+Copy the safe environment template and replace `your_password` locally:
+
+```bash
+cp .env.example .env
+set -a
+source .env
+set +a
+```
+
+Apply and inspect the Alembic-controlled schema:
+
+```bash
+alembic upgrade head
+alembic current
+psql -U financeiq_user -d financeiq -c '\d users'
+```
+
+The initial migration creates only the `users` table in preparation for a
+later authentication phase. No current endpoint reads from or writes to it.
 
 ### 5. Configure the frontend
 
