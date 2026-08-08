@@ -62,15 +62,30 @@ export interface Transaction {
 
 export type AmountSign = "purchase_positive" | "purchase_negative";
 
+export interface CsvColumnMapping {
+  date: string;
+  description: string;
+  amount: string;
+}
+
+export interface CsvValidationResult {
+  filename: string;
+  columns: string[];
+  row_count: number;
+  suggested_mapping: {
+    date: string | null;
+    description: string | null;
+    amount: string | null;
+  };
+  preview: Record<string, string | number | boolean | null>[];
+  warnings: string[];
+}
+
 export interface ImportResult {
   dataset_id: string;
   filename: string;
   transaction_count: number;
-  column_mapping: {
-    date: string;
-    description: string;
-    amount: string;
-  };
+  column_mapping: CsvColumnMapping;
   storage: "temporary";
 }
 

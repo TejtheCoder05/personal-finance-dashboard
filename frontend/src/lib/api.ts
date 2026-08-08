@@ -6,6 +6,8 @@ import type {
   SpendingSummary,
   Transaction,
   AmountSign,
+  CsvColumnMapping,
+  CsvValidationResult,
   ImportResult,
 } from "@/types/finance";
 
@@ -94,10 +96,16 @@ export function getTransactions(
 export async function importTransactions(
   file: File,
   amountSign: AmountSign,
+  mapping?: CsvColumnMapping,
 ): Promise<ImportResult> {
   const formData = new FormData();
   formData.set("file", file);
   formData.set("amount_sign", amountSign);
+  if (mapping) {
+    formData.set("date_column", mapping.date);
+    formData.set("description_column", mapping.description);
+    formData.set("amount_column", mapping.amount);
+  }
 
   const response = await fetch(`${API_BASE_URL}/api/imports`, {
     method: "POST",
@@ -109,6 +117,27 @@ export async function importTransactions(
       detail?: string;
     } | null;
     throw new Error(errorBody?.detail ?? `Upload failed: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function validateTransactionCsv(
+  file: File,
+): Promise<CsvValidationResult> {
+  const formData = new FormData();
+  formData.set("file", file);
+
+  const response = await fetch(`${API_BASE_URL}/api/imports/validate`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorBody = (await response.json().catch(() => null)) as {
+      detail?: string;
+    } | null;
+    throw new Error(errorBody?.detail ?? `Validation failed: ${response.status}`);
   }
 
   return response.json();

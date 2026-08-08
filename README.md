@@ -86,6 +86,7 @@ The responsive dashboard includes:
 * Anomaly-only filtering
 * Transaction-limit controls
 * CSV upload with explicit purchase-sign handling
+* CSV validation, row preview, and column mapping
 * Demo Mode and uploaded-data switching
 * Locally persisted savings goals with progress tracking
 * Loading states
