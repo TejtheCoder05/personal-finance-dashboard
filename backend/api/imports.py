@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import OrderedDict
 from dataclasses import dataclass
 from io import BytesIO
 import json
@@ -20,6 +21,10 @@ from backend.pipeline.clean import clean_transactions
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 MAX_TRANSACTION_ROWS = 10_000
 
+# Anonymous demo uploads live in process memory, so the store is capped and
+# evicted oldest-first to keep it from growing without bound.
+MAX_TEMPORARY_DATASETS = 50
+
 DATE_ALIASES = ("date", "transaction date", "posted date", "posting date")
 DESCRIPTION_ALIASES = ("description", "merchant", "name", "payee", "details")
 AMOUNT_ALIASES = ("amount",)
@@ -38,7 +43,7 @@ class ImportedDataset:
     analytics: dict
 
 
-_datasets: dict[str, ImportedDataset] = {}
+_datasets: OrderedDict[str, ImportedDataset] = OrderedDict()
 _datasets_lock = Lock()
 
 
@@ -286,10 +291,17 @@ def process_upload(
         transactions=transactions,
         analytics=analytics,
     )
+    remember_dataset(dataset)
+    return dataset, mapping
+
+
+def remember_dataset(dataset: ImportedDataset) -> None:
+    """Store a demo dataset in memory, evicting the oldest beyond the cap."""
+
     with _datasets_lock:
         _datasets[dataset.dataset_id] = dataset
-
-    return dataset, mapping
+        while len(_datasets) > MAX_TEMPORARY_DATASETS:
+            _datasets.popitem(last=False)
 
 
 def get_imported_dataset(dataset_id: str) -> ImportedDataset | None:

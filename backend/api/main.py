@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Annotated
 import json
+import os
 
 import pandas as pd
 
@@ -15,7 +16,8 @@ from fastapi import (
     UploadFile,
 )
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy import text
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from backend.analytics.spending import build_spending_analytics
@@ -105,14 +107,32 @@ app = FastAPI(
 # CORS
 # ---------------------------------------------------------
 
-# Allows our future frontend to communicate with FastAPI.
+# Allows the frontend to send its authenticated cookie to FastAPI. Credentialed
+# CORS forbids a wildcard origin, so deployments must list their frontend
+# origin in CORS_ALLOW_ORIGINS instead.
 
-origins = [
+DEFAULT_ORIGINS = (
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-]
+)
+
+
+def get_allowed_origins() -> list[str]:
+    configured = os.getenv("CORS_ALLOW_ORIGINS", "").strip()
+    if not configured:
+        return list(DEFAULT_ORIGINS)
+    origins = [origin.strip() for origin in configured.split(",") if origin.strip()]
+    if "*" in origins:
+        raise RuntimeError(
+            "CORS_ALLOW_ORIGINS cannot be '*' because authenticated requests "
+            "send cookies. List each frontend origin explicitly."
+        )
+    return origins
+
+
+origins = get_allowed_origins()
 
 app.add_middleware(
     CORSMiddleware,
@@ -272,9 +292,9 @@ def root():
 # ---------------------------------------------------------
 
 @app.get("/health")
-def health():
+def health(db: OptionalDbSession):
     """
-    Confirm that the API and required data files exist.
+    Confirm that the API, its data files, and the database are usable.
     """
 
     required_files = [
@@ -292,15 +312,25 @@ def health():
         if not path.exists()
     ]
 
-    if missing_files:
-        return {
-            "status": "degraded",
-            "missing_files": missing_files,
-        }
+    if db is None:
+        database = "not_configured"
+    else:
+        try:
+            db.execute(text("SELECT 1"))
+            database = "connected"
+        except SQLAlchemyError:
+            database = "unavailable"
 
+    # A deployment without DATABASE_URL is a supported demo-only mode, so it
+    # stays healthy; a configured database that cannot be reached is not.
     return {
-        "status": "healthy",
-        "missing_files": [],
+        "status": (
+            "healthy"
+            if not missing_files and database != "unavailable"
+            else "degraded"
+        ),
+        "missing_files": missing_files,
+        "database": database,
     }
 
 

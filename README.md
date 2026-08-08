@@ -357,6 +357,14 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
+Then fetch the sentence encoder once. CSV imports load it with
+`local_files_only=True` so a request never waits on the network, which means
+the model must already be cached on every machine, image, or CI runner:
+
+```bash
+python -m backend.ml.embeddings --download
+```
+
 ### 4. Start the FastAPI backend
 
 From the project root:

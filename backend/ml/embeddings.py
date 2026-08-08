@@ -1,10 +1,24 @@
 from pathlib import Path
+import sys
 
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 
 
 MODEL_NAME = "all-MiniLM-L6-v2"
+
+
+def download_encoder() -> SentenceTransformer:
+    """Fetch the sentence encoder into the local cache.
+
+    Request-time code loads the encoder with ``local_files_only=True`` so an
+    import never depends on the network. Run this once per machine, image, or
+    CI job before serving traffic:
+
+        python -m backend.ml.embeddings --download
+    """
+
+    return SentenceTransformer(MODEL_NAME)
 
 
 def build_semantic_features(
@@ -32,6 +46,11 @@ def build_semantic_features(
     return embeddings, model
 
 if __name__ == "__main__":
+
+    if "--download" in sys.argv:
+        download_encoder()
+        print(f"Sentence encoder '{MODEL_NAME}' is available locally.")
+        raise SystemExit(0)
 
     project_root = Path(__file__).resolve().parents[2]
 
