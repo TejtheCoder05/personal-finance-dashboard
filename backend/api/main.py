@@ -3,11 +3,12 @@ import json
 
 import pandas as pd
 
-from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Query, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api.imports import (
     ImportValidationError,
+    delete_imported_dataset,
     get_imported_dataset,
     inspect_transaction_csv,
     process_upload,
@@ -467,3 +468,12 @@ async def validate_transaction_import(file: UploadFile = File(...)):
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     return {"filename": filename, **inspection}
+
+
+@app.delete("/api/imports/{dataset_id}", status_code=204)
+def delete_transaction_import(dataset_id: str):
+    """Permanently clear a temporary uploaded dataset from memory."""
+
+    if not delete_imported_dataset(dataset_id):
+        raise HTTPException(status_code=404, detail="Uploaded dataset not found.")
+    return Response(status_code=204)

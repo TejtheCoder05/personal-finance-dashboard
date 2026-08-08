@@ -268,3 +268,10 @@ def process_upload(
 def get_imported_dataset(dataset_id: str) -> ImportedDataset | None:
     with _datasets_lock:
         return _datasets.get(dataset_id)
+
+
+def delete_imported_dataset(dataset_id: str) -> bool:
+    """Remove an uploaded dataset from temporary backend memory."""
+
+    with _datasets_lock:
+        return _datasets.pop(dataset_id, None) is not None

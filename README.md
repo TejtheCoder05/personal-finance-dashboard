@@ -269,6 +269,7 @@ The FastAPI backend exposes the following endpoints:
 | GET    | `/api/transactions` | Transaction records      |
 | POST   | `/api/imports`      | Import a temporary CSV   |
 | POST   | `/api/imports/validate` | Preview and map a CSV |
+| DELETE | `/api/imports/{dataset_id}` | Remove temporary data |
 
 The transaction endpoint supports:
 

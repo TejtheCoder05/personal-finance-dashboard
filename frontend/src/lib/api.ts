@@ -142,3 +142,14 @@ export async function validateTransactionCsv(
 
   return response.json();
 }
+
+export async function deleteImportedDataset(datasetId: string): Promise<void> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/imports/${encodeURIComponent(datasetId)}`,
+    { method: "DELETE" },
+  );
+
+  if (!response.ok && response.status !== 404) {
+    throw new Error(`Could not remove uploaded data: ${response.status}`);
+  }
+}

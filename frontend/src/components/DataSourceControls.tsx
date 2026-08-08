@@ -3,7 +3,11 @@
 import { FormEvent, useRef, useState } from "react";
 
 import { useDataSource } from "@/components/DataSourceProvider";
-import { importTransactions, validateTransactionCsv } from "@/lib/api";
+import {
+  deleteImportedDataset,
+  importTransactions,
+  validateTransactionCsv,
+} from "@/lib/api";
 import type {
   AmountSign,
   CsvColumnMapping,
@@ -24,6 +28,7 @@ export default function DataSourceControls() {
   const [mapping, setMapping] = useState<CsvColumnMapping>(emptyMapping);
   const [amountSign, setAmountSign] = useState<AmountSign | "">("");
   const [working, setWorking] = useState(false);
+  const [removing, setRemoving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   function resetUpload() {
@@ -93,6 +98,28 @@ export default function DataSourceControls() {
     setError(null);
   }
 
+  async function removeUpload() {
+    if (!dataset) {
+      return;
+    }
+
+    try {
+      setRemoving(true);
+      setError(null);
+      await deleteImportedDataset(dataset.dataset_id);
+      activateDemo();
+      resetUpload();
+    } catch (removeError) {
+      setError(
+        removeError instanceof Error
+          ? removeError.message
+          : "Uploaded data could not be removed.",
+      );
+    } finally {
+      setRemoving(false);
+    }
+  }
+
   return (
     <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
       <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
@@ -134,10 +161,11 @@ export default function DataSourceControls() {
             {dataset && (
               <button
                 type="button"
-                onClick={activateDemo}
+                onClick={removeUpload}
+                disabled={removing}
                 className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
               >
-                Use Demo
+                {removing ? "Removing…" : "Remove & use Demo"}
               </button>
             )}
           </div>
