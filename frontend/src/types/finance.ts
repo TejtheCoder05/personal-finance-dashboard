@@ -73,3 +73,11 @@ export interface ImportResult {
   };
   storage: "temporary";
 }
+
+export interface SavingsGoal {
+  id: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  targetDate: string | null;
+}

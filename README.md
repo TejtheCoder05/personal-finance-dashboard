@@ -87,6 +87,7 @@ The responsive dashboard includes:
 * Transaction-limit controls
 * CSV upload with explicit purchase-sign handling
 * Demo Mode and uploaded-data switching
+* Locally persisted savings goals with progress tracking
 * Loading states
 * API error states
 

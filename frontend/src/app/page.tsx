@@ -6,6 +6,7 @@ import SummaryCards from "@/components/SummaryCards";
 import TopMerchants from "@/components/TopMerchants";
 import MobileHeader from "@/components/MobileHeader";
 import DataSourceControls from "@/components/DataSourceControls";
+import SavingsGoals from "@/components/SavingsGoals";
 
 const navigation = [
   "Overview",
@@ -208,6 +209,7 @@ export default function Home() {
           <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
   <RecentTransactions />
 </section>
+          <SavingsGoals />
         </div>
       </main>
     </div>
