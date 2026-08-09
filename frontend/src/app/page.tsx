@@ -8,209 +8,181 @@ import MobileHeader from "@/components/MobileHeader";
 import DataSourceControls from "@/components/DataSourceControls";
 import SavingsGoals from "@/components/SavingsGoals";
 import AuthControls from "@/components/AuthControls";
-
-const navigation = [
-  "Overview",
-  "Transactions",
-  "Analytics",
-  "Anomalies",
-];
+import SidebarNav from "@/components/SidebarNav";
+import { Panel, PanelHeader, Pill, SectionLabel } from "@/components/ui/Panel";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#f6f7f9]">
+    <div className="min-h-dvh bg-canvas">
+      <a
+        href="#dashboard"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+      >
+        Skip to dashboard
+      </a>
+
       <MobileHeader />
-      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col bg-[#111827] text-white lg:flex">
-        <div className="flex h-20 items-center border-b border-white/10 px-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500 font-bold text-white">
+
+      {/* Desktop navigation rail */}
+      <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-nav-line bg-nav text-nav-ink lg:flex">
+        <div className="flex h-16 items-center border-b border-nav-line px-5">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-sm font-bold text-white">
               F
-            </div>
+            </span>
 
             <div>
-              <p className="text-base font-semibold tracking-tight">
-                FinanceIQ
-              </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-sm font-semibold tracking-tight">FinanceIQ</p>
+              <p className="text-[0.6875rem] text-nav-ink-3">
                 ML Finance Analytics
               </p>
             </div>
           </div>
         </div>
 
-        <nav className="flex-1 px-4 py-6">
-          <p className="mb-3 px-3 text-xs font-medium uppercase tracking-wider text-gray-500">
-            Dashboard
-          </p>
+        <SidebarNav />
 
-          <div className="space-y-1">
-            {navigation.map((item, index) => (
-              <button
-                key={item}
-                className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
-                  index === 0
-                    ? "bg-white/10 text-white"
-                    : "text-gray-400 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                <span
-                  className={`h-2 w-2 rounded-full ${
-                    index === 0 ? "bg-emerald-400" : "bg-gray-600"
-                  }`}
-                />
-
-                {item}
-              </button>
-            ))}
-          </div>
-        </nav>
-
-        <div className="border-t border-white/10 p-4">
-          <div className="rounded-xl bg-white/5 p-4">
-            <div className="mb-2 flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              <span className="text-sm font-medium">
-                ML Pipeline
+        <div className="border-t border-nav-line p-3">
+          <div className="rounded-lg bg-nav-2 p-3.5">
+            <div className="mb-1.5 flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className="h-1.5 w-1.5 rounded-full bg-emerald-400"
+              />
+              <span className="text-[0.8125rem] font-medium text-nav-ink">
+                System status
               </span>
             </div>
 
-            <p className="text-xs leading-5 text-gray-400">
-              Categorization and anomaly detection models ready.
+            <p className="text-xs leading-5 text-nav-ink-3">
+              API connected. Categorisation and anomaly detection models ready.
             </p>
           </div>
         </div>
       </aside>
 
-      <main className="lg:ml-64">
-        <header className="sticky top-0 z-10 hidden border-b border-gray-200 bg-white/90 backdrop-blur lg:block">
-          <div className="flex h-20 items-center justify-between px-6 lg:px-10">
-            <div>
-              <h1 className="text-xl font-semibold tracking-tight text-gray-900">
+      <main className="lg:ml-60">
+        <header className="sticky top-0 z-30 hidden border-b border-hairline bg-surface/85 backdrop-blur lg:block">
+          <div className="flex h-16 items-center justify-between gap-6 px-6 xl:px-8">
+            <div className="min-w-0">
+              <h1 className="text-base font-semibold tracking-tight text-ink">
                 Financial Overview
               </h1>
 
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="truncate text-[0.8125rem] text-ink-3">
                 ML-powered spending insights and transaction monitoring
               </p>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="hidden items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-2 xl:flex">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                <span className="text-xs font-medium text-gray-600">API Connected</span>
-              </div>
-              <AuthControls />
-            </div>
+            <AuthControls />
           </div>
         </header>
 
-        <div className="mx-auto max-w-7xl space-y-8 p-6 lg:p-10">
+        <div
+          id="dashboard"
+          className="mx-auto max-w-[90rem] scroll-mt-20 space-y-8 p-4 sm:p-6 xl:p-8"
+        >
           <div className="lg:hidden">
-  <h1 className="text-xl font-semibold tracking-tight text-gray-900">
-    Financial Overview
-  </h1>
+            <h1 className="text-lg font-semibold tracking-tight text-ink">
+              Financial Overview
+            </h1>
 
-  <p className="mt-1 text-sm leading-6 text-gray-500">
-    ML-powered spending insights and transaction monitoring
-  </p>
-</div>
-          <DataSourceControls />
-          <section>
-            <div className="mb-5 flex items-end justify-between">
-              <div>
-                <p className="text-sm font-medium text-emerald-600">
-                  Dashboard
-                </p>
+            <p className="mt-1 text-sm leading-6 text-ink-3">
+              ML-powered spending insights and transaction monitoring
+            </p>
+          </div>
 
-                <h2 className="mt-1 text-2xl font-semibold tracking-tight text-gray-900">
-                  Spending at a glance
-                </h2>
-              </div>
+          <section id="section-source" aria-labelledby="label-source">
+            <SectionLabel id="label-source">Data source</SectionLabel>
 
-              <p className="hidden text-sm text-gray-500 md:block">
-                Live data from FastAPI
-              </p>
-            </div>
+            <DataSourceControls />
+          </section>
+
+          <section id="section-metrics" aria-labelledby="label-metrics">
+            <SectionLabel id="label-metrics" meta="Live data from FastAPI">
+              Key metrics
+            </SectionLabel>
 
             <SummaryCards />
           </section>
 
-          <section className="grid gap-6 xl:grid-cols-3">
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm xl:col-span-2">
-              <div className="mb-6">
-                <h3 className="font-semibold text-gray-900">
-                  Monthly Spending
-                </h3>
+          {/* scroll-mt clears the sticky header when jumped to from the nav. */}
+          <section
+            id="section-spending"
+            aria-labelledby="label-spending"
+            className="scroll-mt-20"
+          >
+            <SectionLabel id="label-spending">Spending analysis</SectionLabel>
 
-                <p className="mt-1 text-sm text-gray-500">
-                  Spending trends over time
-                </p>
-              </div>
+            <div className="grid gap-5 xl:grid-cols-3">
+              <Panel className="xl:col-span-2">
+                <PanelHeader
+                  title="Monthly Spending"
+                  description="Total spend per month across the active dataset"
+                  className="mb-5"
+                />
 
-              <MonthlySpendingChart />
-            </div>
+                <MonthlySpendingChart />
+              </Panel>
 
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="mb-6">
-                <h3 className="font-semibold text-gray-900">
-                  Spending by Category
-                </h3>
+              <Panel>
+                <PanelHeader
+                  title="Spending by Category"
+                  description="ML-classified purchases"
+                  className="mb-5"
+                />
 
-                <p className="mt-1 text-sm text-gray-500">
-                  ML-classified purchases
-                </p>
-              </div>
-
-              <CategorySpendingChart />
+                <CategorySpendingChart />
+              </Panel>
             </div>
           </section>
 
-          <section className="grid gap-6 lg:grid-cols-2">
-         <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-  <div className="mb-6 flex items-center justify-between">
-    <div>
-      <h3 className="font-semibold text-gray-900">
-        Top Merchants
-      </h3>
+          <section id="section-merchants" aria-labelledby="label-merchants">
+            <SectionLabel id="label-merchants">Merchants and risk</SectionLabel>
 
-      <p className="mt-1 text-sm text-gray-500">
-        Highest spending by merchant
-      </p>
-    </div>
+            <div className="grid gap-5 lg:grid-cols-2">
+              <Panel>
+                <PanelHeader
+                  title="Top Merchants"
+                  description="Highest spending by merchant"
+                  action={<Pill>Top 5</Pill>}
+                  className="mb-5"
+                />
 
-    <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
-      Top 5
-    </span>
-  </div>
+                <TopMerchants />
+              </Panel>
 
-  <TopMerchants />
-</div>
+              <Panel id="section-anomalies" className="scroll-mt-20">
+                <PanelHeader
+                  title="Anomaly Detection"
+                  description="Unusual spending identified by ML"
+                  action={<Pill tone="caution">ML</Pill>}
+                  className="mb-5"
+                />
 
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-  <div className="mb-6 flex items-center justify-between">
-    <div>
-      <h3 className="font-semibold text-gray-900">
-        Anomaly Detection
-      </h3>
-
-      <p className="mt-1 text-sm text-gray-500">
-        Unusual spending identified by ML
-      </p>
-    </div>
-
-    <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
-      ML
-    </span>
-  </div>
-
-  <AnomalyAlerts />
-</div>
+                <AnomalyAlerts />
+              </Panel>
+            </div>
           </section>
 
-          <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-  <RecentTransactions />
-</section>
-          <SavingsGoals />
+          <section
+            id="section-transactions"
+            aria-labelledby="label-transactions"
+            className="scroll-mt-20"
+          >
+            <SectionLabel id="label-transactions">Transactions</SectionLabel>
+
+            {/* Flush so the table can run edge to edge inside the panel. */}
+            <Panel flush className="overflow-hidden">
+              <RecentTransactions />
+            </Panel>
+          </section>
+
+          <section id="section-planning" aria-labelledby="label-planning">
+            <SectionLabel id="label-planning">Planning</SectionLabel>
+
+            <SavingsGoals />
+          </section>
         </div>
       </main>
     </div>

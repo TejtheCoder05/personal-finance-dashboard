@@ -5,7 +5,16 @@ import { useEffect, useState } from "react";
 import { getTransactions } from "@/lib/api";
 import type { Transaction } from "@/types/finance";
 import { useDataSource } from "@/components/DataSourceProvider";
+import { getCategoryColor } from "@/lib/categoryColors";
+import {
+  EmptyState,
+  ErrorState,
+  LoadingRegion,
+  Skeleton,
+} from "@/components/ui/States";
+import { IconAlert, IconCheck } from "@/components/ui/Icons";
 
+// These strings are the category labels the API filters on — do not localise.
 const categories = [
   "All",
   "Dining",
@@ -19,6 +28,11 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
+
+const controlClass =
+  "h-9 rounded-lg border border-hairline bg-surface px-3 text-sm text-ink-2 outline-none transition-colors duration-150 hover:border-hairline-strong focus:border-brand focus:ring-2 focus:ring-brand-line";
+
+const GUTTER = "px-5 sm:px-6";
 
 function formatMerchantName(merchant: string) {
   return merchant
@@ -40,26 +54,46 @@ function formatDate(date: string) {
   }).format(parsedDate);
 }
 
-function getCategoryStyle(category: string) {
-  switch (category) {
-    case "Dining":
-      return "bg-violet-50 text-violet-700";
+function ConfidenceBar({ value }: { value: number }) {
+  const percent = Math.min(value * 100, 100);
 
-    case "Groceries":
-      return "bg-emerald-50 text-emerald-700";
+  return (
+    <div className="flex items-center gap-2">
+      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-surface-3">
+        <div
+          className="h-full rounded-full bg-brand"
+          style={{ width: `${percent}%` }}
+        />
+      </div>
 
-    case "Entertainment":
-      return "bg-pink-50 text-pink-700";
+      <span className="numeric text-xs text-ink-3">{percent.toFixed(0)}%</span>
+    </div>
+  );
+}
 
-    case "Fuel":
-      return "bg-amber-50 text-amber-700";
-
-    case "Shopping":
-      return "bg-blue-50 text-blue-700";
-
-    default:
-      return "bg-gray-100 text-gray-600";
-  }
+function MerchantAvatar({
+  merchant,
+  isAnomaly,
+  size,
+}: {
+  merchant: string;
+  isAnomaly: boolean;
+  size: "sm" | "md";
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`flex shrink-0 items-center justify-center rounded-md border text-xs font-semibold ${
+        size === "md" ? "h-9 w-9" : "h-8 w-8"
+      } ${
+        isAnomaly
+          ? "border-caution-line bg-caution-soft text-caution"
+          : "border-hairline bg-surface-2 text-ink-2"
+      }`}
+    >
+      {merchant.charAt(0).toUpperCase()}
+    </span>
+  );
 }
 
 export default function RecentTransactions() {
@@ -99,22 +133,25 @@ export default function RecentTransactions() {
 
   return (
     <div>
-      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div
+        className={`${GUTTER} flex flex-col gap-4 pb-4 pt-5 sm:pt-6 lg:flex-row lg:items-start lg:justify-between`}
+      >
         <div>
-          <h3 className="font-semibold text-gray-900">
+          <h3 className="text-[0.9375rem] font-semibold tracking-tight text-ink">
             Recent Transactions
           </h3>
 
-          <p className="mt-1 text-sm text-gray-500">
-            Latest categorized transaction activity
+          <p className="mt-1 text-sm text-ink-3">
+            Latest categorised transaction activity
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:items-center">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
           <select
+            aria-label="Filter by category"
             value={category}
             onChange={(event) => setCategory(event.target.value)}
-            className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-600 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 sm:w-auto"
+            className={`${controlClass} w-full sm:w-auto`}
           >
             {categories.map((categoryOption) => (
               <option
@@ -129,11 +166,12 @@ export default function RecentTransactions() {
           </select>
 
           <select
+            aria-label="Rows to show"
             value={limit}
             onChange={(event) =>
               setLimit(Number(event.target.value))
             }
-            className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-600 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 sm:w-auto"
+            className={`${controlClass} w-full sm:w-auto`}
           >
             <option value={10}>10 rows</option>
             <option value={25}>25 rows</option>
@@ -142,180 +180,171 @@ export default function RecentTransactions() {
 
           <button
             type="button"
+            aria-pressed={anomaliesOnly}
             onClick={() => setAnomaliesOnly((current) => !current)}
-            className={`col-span-2 w-full rounded-lg border px-3 py-2 text-sm font-medium transition sm:w-auto ${
+            className={`col-span-2 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border px-3 text-sm font-medium transition-colors duration-150 sm:w-auto ${
               anomaliesOnly
-                ? "border-amber-200 bg-amber-50 text-amber-700"
-                : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                ? "border-caution-line bg-caution-soft text-caution"
+                : "border-hairline bg-surface text-ink-2 hover:border-hairline-strong hover:bg-surface-2"
             }`}
           >
-            {anomaliesOnly
-              ? "✓ Anomalies only"
-              : "Anomalies only"}
+            {anomaliesOnly ? <IconCheck size={14} /> : <IconAlert size={14} />}
+            Anomalies only
           </button>
         </div>
       </div>
 
       {loading ? (
-        <div className="space-y-3">
+        <LoadingRegion
+          label="Loading transactions"
+          className={`${GUTTER} space-y-px pb-6`}
+        >
           {Array.from({ length: 6 }).map((_, index) => (
             <div
               key={index}
-              className="rounded-xl border border-gray-100 p-4"
+              className="flex items-center gap-3 border-t border-hairline py-4"
             >
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 animate-pulse rounded-lg bg-gray-100" />
+              <Skeleton className="h-9 w-9 rounded-md" />
 
-                <div className="flex-1">
-                  <div className="h-4 w-32 animate-pulse rounded bg-gray-200" />
-                  <div className="mt-2 h-3 w-24 animate-pulse rounded bg-gray-100" />
-                </div>
-
-                <div className="h-4 w-16 animate-pulse rounded bg-gray-200" />
+              <div className="flex-1">
+                <Skeleton className="h-4 w-40" />
+                <Skeleton className="mt-2 h-3 w-24" />
               </div>
+
+              <Skeleton className="h-4 w-16" />
             </div>
           ))}
-        </div>
+        </LoadingRegion>
       ) : error ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-          <p className="text-sm font-semibold text-red-800">
-            Could not load transactions
-          </p>
-
-          <p className="mt-1 text-xs text-red-600">
-            {error}
-          </p>
+        <div className={`${GUTTER} pb-6`}>
+          <ErrorState title="Could not load transactions" message={error} />
         </div>
       ) : transactions.length === 0 ? (
-        <div className="rounded-xl border border-gray-200 bg-gray-50 p-10 text-center">
-          <p className="text-sm font-medium text-gray-700">
-            No transactions found
-          </p>
-
-          <p className="mt-1 text-xs text-gray-400">
-            Try changing the selected filters.
-          </p>
+        <div className={`${GUTTER} pb-6`}>
+          <EmptyState
+            title="No transactions found"
+            message="No rows match the current filters. Try a different category or turn off the anomaly filter."
+          />
         </div>
       ) : (
         <>
           {/* Mobile transaction cards */}
-          <div className="space-y-3 md:hidden">
+          <ul className={`${GUTTER} space-y-3 pb-5 md:hidden`}>
             {transactions.map((transaction, index) => (
-              <div
+              <li
                 key={`${transaction.date}-${transaction.merchant}-${transaction.amount}-${index}`}
-                className={`rounded-xl border p-4 ${
+                className={`rounded-lg border p-4 ${
                   transaction.is_anomaly
-                    ? "border-amber-200 bg-amber-50/40"
-                    : "border-gray-200 bg-white"
+                    ? "border-caution-line bg-caution-soft"
+                    : "border-hairline bg-surface"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
-                    <div
-                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-semibold ${
-                        transaction.is_anomaly
-                          ? "bg-amber-100 text-amber-700"
-                          : "bg-gray-100 text-gray-600"
-                      }`}
-                    >
-                      {transaction.merchant
-                        .charAt(0)
-                        .toUpperCase()}
-                    </div>
+                    <MerchantAvatar
+                      merchant={transaction.merchant}
+                      isAnomaly={transaction.is_anomaly}
+                      size="md"
+                    />
 
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-gray-900">
+                      <p className="truncate text-sm font-semibold text-ink">
                         {formatMerchantName(transaction.merchant)}
                       </p>
 
-                      <p className="mt-0.5 truncate text-xs text-gray-400">
+                      <p className="mt-0.5 truncate text-xs text-ink-3">
                         {transaction.description_raw}
                       </p>
                     </div>
                   </div>
 
                   <div className="shrink-0 text-right">
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="numeric text-sm font-semibold text-ink">
                       {currencyFormatter.format(transaction.amount)}
                     </p>
 
                     {transaction.is_anomaly && (
-                      <p className="mt-1 text-xs font-medium text-red-600">
+                      <p className="numeric mt-1 text-xs font-medium text-critical">
                         Score {transaction.anomaly_score.toFixed(1)}
                       </p>
                     )}
                   </div>
                 </div>
 
-                <div className="mt-4 flex flex-wrap items-center gap-2">
+                <div className="mt-3.5 flex flex-wrap items-center gap-2">
                   <span
-                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${getCategoryStyle(
-                      transaction.category,
-                    )}`}
+                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
+                      getCategoryColor(transaction.category).chip
+                    }`}
                   >
                     {transaction.category}
                   </span>
 
                   {transaction.is_anomaly && (
-                    <span className="rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-critical-line bg-critical-soft px-2.5 py-1 text-xs font-semibold text-critical">
+                      <IconAlert size={11} />
                       Anomaly
                     </span>
                   )}
 
-                  <span className="text-xs text-gray-400">
+                  <span className="numeric text-xs text-ink-3">
                     {formatDate(transaction.date)}
                   </span>
                 </div>
 
-                <div className="mt-4 border-t border-gray-100 pt-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-400">
-                      Category confidence
-                    </span>
+                <div className="mt-3.5 flex items-center justify-between border-t border-hairline pt-3">
+                  <span className="text-xs text-ink-3">
+                    Category confidence
+                  </span>
 
-                    <span className="text-xs font-medium text-gray-600">
-                      {(transaction.category_confidence * 100).toFixed(0)}%
-                    </span>
-                  </div>
-
-                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-gray-100">
-                    <div
-                      className="h-full rounded-full bg-emerald-500"
-                      style={{
-                        width: `${Math.min(
-                          transaction.category_confidence * 100,
-                          100,
-                        )}%`,
-                      }}
-                    />
-                  </div>
+                  <ConfidenceBar value={transaction.category_confidence} />
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
 
           {/* Desktop transaction table */}
-          <div className="hidden overflow-x-auto rounded-xl border border-gray-200 md:block">
-            <table className="w-full min-w-[850px] border-collapse">
+          <div className="hidden overflow-x-auto md:block">
+            <table className="w-full min-w-[52rem] border-collapse text-left">
+              <caption className="sr-only">
+                Recent transactions with ML category, confidence and anomaly
+                status
+              </caption>
+
               <thead>
-                <tr className="bg-gray-50 text-left">
-                  <th className="px-5 py-3 text-xs font-medium uppercase tracking-wide text-gray-500">
+                <tr className="border-y border-hairline bg-surface-2">
+                  <th
+                    scope="col"
+                    className="py-2.5 pl-5 pr-4 text-xs font-semibold uppercase tracking-[0.06em] text-ink-3 sm:pl-6"
+                  >
                     Merchant
                   </th>
 
-                  <th className="px-5 py-3 text-xs font-medium uppercase tracking-wide text-gray-500">
+                  <th
+                    scope="col"
+                    className="px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.06em] text-ink-3"
+                  >
                     Category
                   </th>
 
-                  <th className="px-5 py-3 text-xs font-medium uppercase tracking-wide text-gray-500">
+                  <th
+                    scope="col"
+                    className="px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.06em] text-ink-3"
+                  >
                     Date
                   </th>
 
-                  <th className="px-5 py-3 text-xs font-medium uppercase tracking-wide text-gray-500">
+                  <th
+                    scope="col"
+                    className="px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.06em] text-ink-3"
+                  >
                     Confidence
                   </th>
 
-                  <th className="px-5 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500">
+                  <th
+                    scope="col"
+                    className="py-2.5 pl-4 pr-5 text-right text-xs font-semibold uppercase tracking-[0.06em] text-ink-3 sm:pr-6"
+                  >
                     Amount
                   </th>
                 </tr>
@@ -325,95 +354,70 @@ export default function RecentTransactions() {
                 {transactions.map((transaction, index) => (
                   <tr
                     key={`${transaction.date}-${transaction.merchant}-${transaction.amount}-${index}`}
-                    className={`border-t border-gray-100 transition hover:bg-gray-50 ${
-                      transaction.is_anomaly
-                        ? "bg-amber-50/40"
-                        : "bg-white"
+                    className={`border-b border-hairline transition-colors duration-150 hover:bg-surface-2 ${
+                      transaction.is_anomaly ? "bg-caution-soft" : "bg-surface"
                     }`}
                   >
-                    <td className="px-5 py-4">
+                    <td className="py-3 pl-5 pr-4 sm:pl-6">
                       <div className="flex items-center gap-3">
-                        <div
-                          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-semibold ${
-                            transaction.is_anomaly
-                              ? "bg-amber-100 text-amber-700"
-                              : "bg-gray-100 text-gray-600"
-                          }`}
-                        >
-                          {transaction.merchant
-                            .charAt(0)
-                            .toUpperCase()}
-                        </div>
+                        <MerchantAvatar
+                          merchant={transaction.merchant}
+                          isAnomaly={transaction.is_anomaly}
+                          size="sm"
+                        />
 
-                        <div>
+                        <div className="min-w-0">
                           <div className="flex items-center gap-2">
-                            <p className="text-sm font-semibold text-gray-900">
+                            <p className="text-sm font-semibold text-ink">
                               {formatMerchantName(
                                 transaction.merchant,
                               )}
                             </p>
 
                             {transaction.is_anomaly && (
-                              <span className="rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-700">
+                              <span className="inline-flex items-center gap-1 rounded-full border border-critical-line bg-critical-soft px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide text-critical">
+                                <IconAlert size={10} />
                                 Anomaly
                               </span>
                             )}
                           </div>
 
-                          <p className="mt-0.5 max-w-[260px] truncate text-xs text-gray-400">
+                          <p className="mt-0.5 max-w-[16rem] truncate text-xs text-ink-3">
                             {transaction.description_raw}
                           </p>
                         </div>
                       </div>
                     </td>
 
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-3">
                       <span
-                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${getCategoryStyle(
-                          transaction.category,
-                        )}`}
+                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
+                          getCategoryColor(transaction.category).chip
+                        }`}
                       >
                         {transaction.category}
                       </span>
                     </td>
 
-                    <td className="whitespace-nowrap px-5 py-4 text-sm text-gray-500">
+                    <td className="numeric whitespace-nowrap px-4 py-3 text-sm text-ink-2">
                       {formatDate(transaction.date)}
                     </td>
 
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-16 overflow-hidden rounded-full bg-gray-100">
-                          <div
-                            className="h-full rounded-full bg-emerald-500"
-                            style={{
-                              width: `${Math.min(
-                                transaction.category_confidence * 100,
-                                100,
-                              )}%`,
-                            }}
-                          />
-                        </div>
-
-                        <span className="text-xs text-gray-500">
-                          {(
-                            transaction.category_confidence *
-                            100
-                          ).toFixed(0)}
-                          %
-                        </span>
-                      </div>
+                    <td className="px-4 py-3">
+                      <ConfidenceBar
+                        value={transaction.category_confidence}
+                      />
                     </td>
 
-                    <td className="px-5 py-4 text-right">
-                      <p className="text-sm font-semibold text-gray-900">
+                    <td className="py-3 pl-4 pr-5 text-right sm:pr-6">
+                      <p className="numeric text-sm font-semibold text-ink">
                         {currencyFormatter.format(
                           transaction.amount,
                         )}
                       </p>
 
                       {transaction.is_anomaly && (
-                        <p className="mt-0.5 text-xs font-medium text-red-600">
+                        <p className="numeric mt-0.5 text-xs font-medium text-critical">
                           Score{" "}
                           {transaction.anomaly_score.toFixed(1)}
                         </p>
@@ -425,8 +429,10 @@ export default function RecentTransactions() {
             </table>
           </div>
 
-          <div className="mt-4 flex flex-col gap-2 text-xs text-gray-400 sm:flex-row sm:items-center sm:justify-between">
-            <p>
+          <div
+            className={`${GUTTER} flex flex-col gap-1 py-4 text-xs text-ink-3 sm:flex-row sm:items-center sm:justify-between`}
+          >
+            <p className="numeric">
               Showing {transactions.length} transaction
               {transactions.length === 1 ? "" : "s"}
             </p>
@@ -435,7 +441,7 @@ export default function RecentTransactions() {
               {category === "All"
                 ? "All categories"
                 : category}
-              {anomaliesOnly ? " • Anomalies only" : ""}
+              {anomaliesOnly ? " · Anomalies only" : ""}
             </p>
           </div>
         </>

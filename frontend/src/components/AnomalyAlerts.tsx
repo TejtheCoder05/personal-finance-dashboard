@@ -5,6 +5,13 @@ import { useEffect, useState } from "react";
 import { getAnomalies } from "@/lib/api";
 import type { AnomalyTransaction } from "@/types/finance";
 import { useDataSource } from "@/components/DataSourceProvider";
+import {
+  EmptyState,
+  ErrorState,
+  LoadingRegion,
+  Skeleton,
+} from "@/components/ui/States";
+import { IconAlert, IconShield } from "@/components/ui/Icons";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -30,16 +37,33 @@ function formatDate(date: string) {
   }).format(parsedDate);
 }
 
-function getScoreStyle(score: number) {
+/*
+  Severity carries a word as well as a colour — the previous version encoded it
+  in the chip tint alone, which is invisible to colourblind users and in print.
+  Thresholds are unchanged.
+*/
+function getSeverity(score: number) {
   if (score >= 90) {
-    return "bg-red-50 text-red-700";
+    return {
+      label: "High",
+      chip: "border-critical-line bg-critical-soft text-critical",
+      rule: "bg-critical",
+    };
   }
 
   if (score >= 75) {
-    return "bg-orange-50 text-orange-700";
+    return {
+      label: "Elevated",
+      chip: "border-caution-line bg-caution-soft text-caution",
+      rule: "bg-caution",
+    };
   }
 
-  return "bg-amber-50 text-amber-700";
+  return {
+    label: "Moderate",
+    chip: "border-hairline bg-surface-2 text-ink-2",
+    rule: "bg-hairline-strong",
+  };
 }
 
 export default function AnomalyAlerts() {
@@ -69,54 +93,36 @@ export default function AnomalyAlerts() {
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <LoadingRegion label="Loading anomalies" className="space-y-3">
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
-            className="rounded-xl border border-gray-100 p-4"
+            className="rounded-lg border border-hairline p-4"
           >
-            <div className="flex justify-between">
-              <div className="h-4 w-32 animate-pulse rounded bg-gray-200" />
-              <div className="h-4 w-16 animate-pulse rounded bg-gray-200" />
+            <div className="flex justify-between gap-4">
+              <Skeleton className="h-4 w-36" />
+              <Skeleton className="h-4 w-16" />
             </div>
 
-            <div className="mt-3 h-3 w-full animate-pulse rounded bg-gray-100" />
-            <div className="mt-2 h-3 w-3/4 animate-pulse rounded bg-gray-100" />
+            <Skeleton className="mt-3 h-3 w-full" />
+            <Skeleton className="mt-2 h-3 w-2/3" />
           </div>
         ))}
-      </div>
+      </LoadingRegion>
     );
   }
 
   if (error) {
-    return (
-      <div className="flex h-56 items-center justify-center rounded-xl border border-red-200 bg-red-50">
-        <div className="text-center">
-          <p className="text-sm font-semibold text-red-800">
-            Could not load anomalies
-          </p>
-
-          <p className="mt-1 text-xs text-red-600">
-            {error}
-          </p>
-        </div>
-      </div>
-    );
+    return <ErrorState title="Could not load anomalies" message={error} />;
   }
 
   if (anomalies.length === 0) {
     return (
-      <div className="flex h-56 items-center justify-center rounded-xl bg-gray-50">
-        <div className="text-center">
-          <p className="text-sm font-medium text-gray-700">
-            No anomalies detected
-          </p>
-
-          <p className="mt-1 text-xs text-gray-400">
-            No unusual spending was flagged.
-          </p>
-        </div>
-      </div>
+      <EmptyState
+        title="No anomalies detected"
+        message="Nothing in this dataset was flagged as unusual spending."
+        icon={<IconShield size={18} />}
+      />
     );
   }
 
@@ -124,61 +130,65 @@ export default function AnomalyAlerts() {
 
   return (
     <div>
-      <div className="space-y-3">
-        {topAnomalies.map((anomaly) => (
-          <div
-            key={`${anomaly.date}-${anomaly.merchant}-${anomaly.amount}`}
-            className="rounded-xl border border-gray-100 bg-gray-50/60 p-4 transition hover:border-gray-200 hover:bg-gray-50"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="truncate text-sm font-semibold text-gray-900">
-                    {formatMerchantName(anomaly.merchant)}
-                  </p>
+      <ul className="space-y-3">
+        {topAnomalies.map((anomaly) => {
+          const severity = getSeverity(anomaly.anomaly_score);
 
-                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-500">
-                    {anomaly.category}
-                  </span>
+          return (
+            <li
+              key={`${anomaly.date}-${anomaly.merchant}-${anomaly.amount}`}
+              className="relative overflow-hidden rounded-lg border border-hairline bg-surface p-4 transition-colors duration-200 hover:border-hairline-strong hover:bg-surface-2"
+            >
+              <span
+                aria-hidden="true"
+                className={`absolute inset-y-0 left-0 w-0.5 ${severity.rule}`}
+              />
+
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="truncate text-sm font-semibold text-ink">
+                      {formatMerchantName(anomaly.merchant)}
+                    </p>
+
+                    <span className="rounded-full border border-hairline bg-surface-2 px-2 py-0.5 text-[0.6875rem] font-medium text-ink-2">
+                      {anomaly.category}
+                    </span>
+                  </div>
+
+                  <p className="numeric mt-1 text-xs text-ink-3">
+                    {formatDate(anomaly.date)}
+                  </p>
                 </div>
 
-                <p className="mt-1 text-xs text-gray-400">
-                  {formatDate(anomaly.date)}
-                </p>
+                <div className="shrink-0 text-right">
+                  <p className="numeric text-sm font-semibold text-ink">
+                    {currencyFormatter.format(anomaly.amount)}
+                  </p>
+
+                  <span
+                    className={`numeric mt-1.5 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.6875rem] font-semibold ${severity.chip}`}
+                  >
+                    <IconAlert size={11} />
+                    {severity.label} · {anomaly.anomaly_score.toFixed(1)}
+                  </span>
+                </div>
               </div>
 
-              <div className="shrink-0 text-right">
-                <p className="text-sm font-semibold text-gray-900">
-                  {currencyFormatter.format(anomaly.amount)}
-                </p>
-
-                <span
-                  className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${getScoreStyle(
-                    anomaly.anomaly_score,
-                  )}`}
-                >
-                  Score {anomaly.anomaly_score.toFixed(1)}
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-3 rounded-lg border border-amber-100 bg-amber-50/60 px-3 py-2">
-              <p className="text-xs leading-5 text-amber-800">
+              <p className="mt-3 border-t border-hairline pt-3 text-xs leading-5 text-ink-2">
                 {anomaly.anomaly_reason}
               </p>
-            </div>
-          </div>
-        ))}
-      </div>
+            </li>
+          );
+        })}
+      </ul>
 
-      <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-4">
-        <p className="text-xs text-gray-400">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-hairline pt-4">
+        <p className="numeric text-xs text-ink-3">
           Showing top {topAnomalies.length} of {anomalies.length} anomalies
         </p>
 
-        <p className="text-xs font-medium text-amber-700">
-          Ranked by anomaly score
-        </p>
+        <p className="text-xs text-ink-3">Ranked by anomaly score</p>
       </div>
     </div>
   );

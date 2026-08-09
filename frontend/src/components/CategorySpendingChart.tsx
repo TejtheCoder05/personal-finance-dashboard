@@ -12,14 +12,15 @@ import {
 import { getCategorySpending } from "@/lib/api";
 import type { CategorySpending } from "@/types/finance";
 import { useDataSource } from "@/components/DataSourceProvider";
-
-const COLORS = [
-  "#10b981",
-  "#3b82f6",
-  "#f59e0b",
-  "#8b5cf6",
-  "#ec4899",
-];
+import { getCategoryColor } from "@/lib/categoryColors";
+import { useReducedMotion } from "@/lib/useReducedMotion";
+import {
+  EmptyState,
+  ErrorState,
+  LoadingRegion,
+  Skeleton,
+} from "@/components/ui/States";
+import { IconAnalytics } from "@/components/ui/Icons";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -35,6 +36,7 @@ const compactCurrencyFormatter = new Intl.NumberFormat("en-US", {
 
 export default function CategorySpendingChart() {
   const { dataset } = useDataSource();
+  const reducedMotion = useReducedMotion();
   const [data, setData] = useState<CategorySpending[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -60,44 +62,30 @@ export default function CategorySpendingChart() {
 
   if (loading) {
     return (
-      <div className="space-y-4">
-        <div className="mx-auto h-44 w-44 animate-pulse rounded-full bg-gray-100" />
+      <LoadingRegion label="Loading category breakdown" className="space-y-5">
+        <Skeleton className="mx-auto h-40 w-40 rounded-full" />
 
         <div className="space-y-3">
           {Array.from({ length: 5 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-5 w-full animate-pulse rounded bg-gray-100"
-            />
+            <Skeleton key={index} className="h-4 w-full" />
           ))}
         </div>
-      </div>
+      </LoadingRegion>
     );
   }
 
   if (error) {
-    return (
-      <div className="flex h-72 items-center justify-center rounded-xl border border-red-200 bg-red-50">
-        <div className="text-center">
-          <p className="text-sm font-semibold text-red-800">
-            Could not load categories
-          </p>
-
-          <p className="mt-1 text-xs text-red-600">
-            {error}
-          </p>
-        </div>
-      </div>
-    );
+    return <ErrorState title="Could not load categories" message={error} />;
   }
 
   if (data.length === 0) {
     return (
-      <div className="flex h-72 items-center justify-center rounded-xl bg-gray-50">
-        <p className="text-sm text-gray-500">
-          No category spending data available.
-        </p>
-      </div>
+      <EmptyState
+        title="No categorised spending"
+        message="Import transactions to see the ML category breakdown."
+        icon={<IconAnalytics size={18} />}
+        className="h-[17.5rem]"
+      />
     );
   }
 
@@ -107,8 +95,21 @@ export default function CategorySpendingChart() {
   );
 
   return (
-    <div>
-      <div className="relative h-48 w-full">
+    <figure className="m-0">
+      <figcaption className="sr-only">
+        Spending by category, totalling{" "}
+        {currencyFormatter.format(totalSpending)}.{" "}
+        {data
+          .map(
+            (category) =>
+              `${category.category}: ${currencyFormatter.format(
+                category.total_spending,
+              )}, ${category.spending_percentage.toFixed(1)} percent`,
+          )
+          .join(". ")}
+      </figcaption>
+
+      <div className="relative h-44 w-full" aria-hidden="true">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -117,15 +118,17 @@ export default function CategorySpendingChart() {
               nameKey="category"
               cx="50%"
               cy="50%"
-              innerRadius={55}
-              outerRadius={78}
-              paddingAngle={3}
-              stroke="none"
+              innerRadius={56}
+              outerRadius={80}
+              paddingAngle={2}
+              stroke="#ffffff"
+              strokeWidth={2}
+              isAnimationActive={!reducedMotion}
             >
-              {data.map((category, index) => (
+              {data.map((category) => (
                 <Cell
                   key={category.category}
-                  fill={COLORS[index % COLORS.length]}
+                  fill={getCategoryColor(category.category).hex}
                 />
               ))}
             </Pie>
@@ -142,60 +145,66 @@ export default function CategorySpendingChart() {
                 ];
               }}
               contentStyle={{
-                borderRadius: "12px",
-                border: "1px solid #e5e7eb",
-                boxShadow: "0 10px 25px rgba(0, 0, 0, 0.08)",
+                borderRadius: "0.5rem",
+                border: "1px solid #e3e8ef",
+                boxShadow: "0 12px 20px -6px rgb(15 23 42 / 0.12)",
+                padding: "0.5rem 0.75rem",
+                fontSize: "0.8125rem",
               }}
+              labelStyle={{ display: "none" }}
+              itemStyle={{ color: "#0f172a" }}
             />
           </PieChart>
         </ResponsiveContainer>
 
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-xs font-medium text-gray-400">
+            <p className="text-[0.6875rem] font-medium uppercase tracking-[0.08em] text-ink-3">
               Total
             </p>
 
-            <p className="mt-1 text-lg font-semibold tracking-tight text-gray-900">
+            <p className="numeric mt-1 text-lg font-semibold tracking-tight text-ink">
               {compactCurrencyFormatter.format(totalSpending)}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="mt-3 space-y-3">
-        {data.map((category, index) => (
+      {/*
+        The legend doubles as the value table, so exact figures are never
+        hover-only.
+      */}
+      <dl className="mt-5 space-y-2.5 border-t border-hairline pt-4">
+        {data.map((category) => (
           <div
             key={category.category}
             className="flex items-center justify-between gap-3"
           >
-            <div className="flex min-w-0 items-center gap-2">
+            <dt className="flex min-w-0 items-center gap-2.5">
               <span
-                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                className="h-2.5 w-2.5 shrink-0 rounded-[3px]"
                 style={{
-                  backgroundColor: COLORS[index % COLORS.length],
+                  backgroundColor: getCategoryColor(category.category).hex,
                 }}
               />
 
-              <span className="truncate text-sm font-medium text-gray-600">
+              <span className="truncate text-sm text-ink-2">
                 {category.category}
               </span>
-            </div>
+            </dt>
 
-            <div className="text-right">
-              <p className="text-sm font-semibold text-gray-900">
-                {compactCurrencyFormatter.format(
-                  category.total_spending,
-                )}
-              </p>
+            <dd className="numeric flex shrink-0 items-baseline gap-2 text-right">
+              <span className="text-sm font-semibold text-ink">
+                {compactCurrencyFormatter.format(category.total_spending)}
+              </span>
 
-              <p className="text-xs text-gray-400">
+              <span className="w-10 text-xs text-ink-3">
                 {category.spending_percentage.toFixed(1)}%
-              </p>
-            </div>
+              </span>
+            </dd>
           </div>
         ))}
-      </div>
-    </div>
+      </dl>
+    </figure>
   );
 }

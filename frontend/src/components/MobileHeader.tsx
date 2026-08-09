@@ -2,121 +2,94 @@
 
 import { useState } from "react";
 import AuthControls from "@/components/AuthControls";
-
-const navigation = [
-  "Overview",
-  "Transactions",
-  "Analytics",
-  "Anomalies",
-];
+import { NAV_ITEMS, NAV_TARGET_IDS } from "@/components/navigation";
+import { useActiveSection } from "@/lib/useActiveSection";
+import { IconClose, IconMenu } from "@/components/ui/Icons";
 
 export default function MobileHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const active = useActiveSection(NAV_TARGET_IDS);
 
   return (
-    <>
-      <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/95 backdrop-blur lg:hidden">
-        <div className="flex h-16 items-center justify-between px-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 text-sm font-bold text-white">
-              F
-            </div>
+    <header className="sticky top-0 z-40 border-b border-hairline bg-surface/95 backdrop-blur lg:hidden">
+      <div className="flex h-16 items-center justify-between px-4 sm:px-5">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-nav text-sm font-bold text-white">
+            F
+          </span>
+
+          <div>
+            <p className="text-sm font-semibold tracking-tight text-ink">
+              FinanceIQ
+            </p>
+
+            <p className="text-[0.6875rem] text-ink-3">
+              ML Finance Analytics
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setMenuOpen((current) => !current)}
+          aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-nav"
+          className="flex h-10 w-10 items-center justify-center rounded-lg border border-hairline bg-surface text-ink-2 transition-colors duration-150 hover:border-hairline-strong hover:bg-surface-2"
+        >
+          {menuOpen ? <IconClose size={20} /> : <IconMenu size={20} />}
+        </button>
+      </div>
+
+      {menuOpen && (
+        <nav
+          id="mobile-nav"
+          aria-label="Dashboard sections"
+          className="border-t border-hairline bg-surface px-4 py-3 sm:px-5"
+        >
+          <ul className="space-y-1">
+            {NAV_ITEMS.map(({ label, targetId, Icon }) => {
+              const isActive = active === targetId;
+
+              return (
+                <li key={label}>
+                  <a
+                    href={`#${targetId}`}
+                    aria-current={isActive ? "location" : undefined}
+                    onClick={() => setMenuOpen(false)}
+                    className={`flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-medium transition-colors duration-150 ${
+                      isActive
+                        ? "bg-brand-soft text-brand"
+                        : "text-ink-2 hover:bg-surface-2 hover:text-ink"
+                    }`}
+                  >
+                    <Icon size={17} className="shrink-0" />
+                    {label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="mt-3 flex items-center gap-2.5 rounded-lg border border-hairline bg-surface-2 px-3 py-2.5">
+            <span
+              aria-hidden="true"
+              className="h-1.5 w-1.5 shrink-0 rounded-full bg-positive"
+            />
 
             <div>
-              <p className="text-sm font-semibold tracking-tight text-gray-900">
-                FinanceIQ
-              </p>
-
-              <p className="text-[11px] text-gray-400">
-                ML Finance Analytics
+              <p className="text-xs font-medium text-ink">API connected</p>
+              <p className="text-[0.6875rem] text-ink-3">
+                Categorisation and anomaly models ready
               </p>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setMenuOpen((current) => !current)}
-            aria-label="Toggle navigation menu"
-            aria-expanded={menuOpen}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-700 transition hover:bg-gray-50"
-          >
-            {menuOpen ? (
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              >
-                <path d="M18 6 6 18" />
-                <path d="m6 6 12 12" />
-              </svg>
-            ) : (
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              >
-                <path d="M4 6h16" />
-                <path d="M4 12h16" />
-                <path d="M4 18h16" />
-              </svg>
-            )}
-          </button>
-        </div>
-
-        {menuOpen && (
-          <nav className="border-t border-gray-100 bg-white px-4 py-3">
-            <div className="space-y-1">
-              {navigation.map((item, index) => (
-                <button
-                  key={item}
-                  type="button"
-                  onClick={() => setMenuOpen(false)}
-                  className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium transition ${
-                    index === 0
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "text-gray-600 hover:bg-gray-50"
-                  }`}
-                >
-                  <span
-                    className={`h-2 w-2 rounded-full ${
-                      index === 0
-                        ? "bg-emerald-500"
-                        : "bg-gray-300"
-                    }`}
-                  />
-
-                  {item}
-                </button>
-              ))}
-            </div>
-
-            <div className="mt-3 flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-3">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
-
-              <div>
-                <p className="text-xs font-medium text-gray-700">
-                  API Connected
-                </p>
-
-                <p className="text-[11px] text-gray-400">
-                  ML pipeline ready
-                </p>
-              </div>
-            </div>
-            <div className="mt-3 border-t border-gray-100 pt-3">
-              <AuthControls compact />
-            </div>
-          </nav>
-        )}
-      </header>
-    </>
+          <div className="mt-3 border-t border-hairline pt-3">
+            <AuthControls compact />
+          </div>
+        </nav>
+      )}
+    </header>
   );
 }

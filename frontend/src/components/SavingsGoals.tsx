@@ -16,12 +16,20 @@ import {
   subscribeToSavingsGoals,
 } from "@/lib/savingsGoals";
 import type { AuthUser, PersistentSavingsGoal, SavingsGoal } from "@/types/finance";
+import { Panel } from "@/components/ui/Panel";
+import { EmptyState, ErrorState, Skeleton } from "@/components/ui/States";
+import { IconClose, IconPlus, IconTarget } from "@/components/ui/Icons";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
   maximumFractionDigits: 0,
 });
+
+const fieldClass =
+  "mt-1.5 h-10 w-full rounded-lg border border-hairline bg-surface px-3 text-sm text-ink outline-none transition-colors duration-150 placeholder:text-ink-3 hover:border-hairline-strong focus:border-brand focus:ring-2 focus:ring-brand-line";
+
+const labelClass = "block text-[0.8125rem] font-medium text-ink-2";
 
 interface GoalDraft {
   name: string;
@@ -194,17 +202,17 @@ function SavingsGoalsContent({ user }: { user: AuthUser | null }) {
   }
 
   return (
-    <section id="savings-goals" className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+    <Panel id="savings-goals">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-sm font-medium text-emerald-600">Planning</p>
-          <h2 className="mt-1 text-xl font-semibold tracking-tight text-gray-900">
+          <h3 className="text-[0.9375rem] font-semibold tracking-tight text-ink">
             Savings Goals
-          </h2>
-          <p className="mt-1 text-sm text-gray-500">
+          </h3>
+          <p className="mt-1 text-sm text-ink-3">
             Track progress toward the things you are saving for.
           </p>
         </div>
+
         <button
           type="button"
           onClick={() => {
@@ -214,116 +222,186 @@ function SavingsGoalsContent({ user }: { user: AuthUser | null }) {
               setFormOpen(true);
             }
           }}
-          className="rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-600"
+          className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg bg-brand px-3.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-brand-strong"
         >
+          {formOpen ? <IconClose size={15} /> : <IconPlus size={15} />}
           {formOpen ? "Cancel" : "Add goal"}
         </button>
       </div>
 
       {formOpen && (
-        <form onSubmit={handleSubmit} className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-4">
+        <form
+          onSubmit={handleSubmit}
+          className="mt-5 rounded-lg border border-hairline bg-surface-2 p-4 sm:p-5"
+        >
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <label className="text-sm font-medium text-gray-700">
-              Goal name
+            <label className={labelClass}>
+              Goal name <span className="text-critical">*</span>
               <input
                 value={draft.name}
                 onChange={(event) => setDraft({ ...draft, name: event.target.value })}
                 placeholder="Emergency fund"
                 maxLength={80}
-                className="mt-1.5 w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                className={fieldClass}
               />
             </label>
-            <label className="text-sm font-medium text-gray-700">
-              Target amount
+            <label className={labelClass}>
+              Target amount <span className="text-critical">*</span>
               <input
                 type="number"
+                inputMode="decimal"
                 min="0.01"
                 step="0.01"
                 value={draft.targetAmount}
                 onChange={(event) => setDraft({ ...draft, targetAmount: event.target.value })}
                 placeholder="5000"
-                className="mt-1.5 w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                className={`${fieldClass} numeric`}
               />
             </label>
-            <label className="text-sm font-medium text-gray-700">
+            <label className={labelClass}>
               Current amount
               <input
                 type="number"
+                inputMode="decimal"
                 min="0"
                 step="0.01"
                 value={draft.currentAmount}
                 onChange={(event) => setDraft({ ...draft, currentAmount: event.target.value })}
                 placeholder="0"
-                className="mt-1.5 w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                className={`${fieldClass} numeric`}
               />
             </label>
-            <label className="text-sm font-medium text-gray-700">
-              Target date <span className="font-normal text-gray-400">(optional)</span>
+            <label className={labelClass}>
+              Target date <span className="font-normal text-ink-3">(optional)</span>
               <input
                 type="date"
                 value={draft.targetDate}
                 onChange={(event) => setDraft({ ...draft, targetDate: event.target.value })}
-                className="mt-1.5 w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                className={fieldClass}
               />
             </label>
           </div>
-          {error && <p role="alert" className="mt-3 text-sm text-red-600">{error}</p>}
+
+          {error && (
+            <p role="alert" className="mt-4 text-sm font-medium text-critical">
+              {error}
+            </p>
+          )}
+
           <div className="mt-4 flex justify-end">
             <button
               type="submit"
               disabled={saving}
-              className="rounded-lg bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex h-9 items-center rounded-lg bg-ink px-4 text-sm font-semibold text-white transition-colors duration-150 hover:bg-nav-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {saving ? "Saving..." : editingId ? "Save changes" : "Create goal"}
+              {saving ? "Saving…" : editingId ? "Save changes" : "Create goal"}
             </button>
           </div>
         </form>
       )}
 
-      <div className="mt-6">
+      <div className="mt-5">
         {goalsLoading ? (
-          <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 px-5 py-10 text-center">
-            <p className="text-sm font-medium text-gray-700">Loading your savings goals...</p>
+          <div
+            role="status"
+            aria-busy="true"
+            className="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+          >
+            <span className="sr-only">Loading your savings goals</span>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div
+                key={index}
+                className="rounded-lg border border-hairline p-5"
+              >
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="mt-4 h-2 w-full rounded-full" />
+                <Skeleton className="mt-4 h-5 w-28" />
+              </div>
+            ))}
           </div>
         ) : goals.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 px-5 py-10 text-center">
-            <p className="text-sm font-medium text-gray-700">No savings goals yet</p>
-            <p className="mt-1 text-xs text-gray-400">Add a goal to start tracking your progress.</p>
-          </div>
+          <EmptyState
+            title="No savings goals yet"
+            message="Add a goal to start tracking progress toward it."
+            icon={<IconTarget size={18} />}
+          />
         ) : (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {goals.map((goal) => {
               const percent = Math.min((goal.currentAmount / goal.targetAmount) * 100, 100);
               const remaining = Math.max(goal.targetAmount - goal.currentAmount, 0);
+              const complete = percent >= 100;
+
               return (
-                <article key={goal.id} className="rounded-xl border border-gray-200 p-5">
+                <article
+                  key={goal.id}
+                  className="rounded-lg border border-hairline bg-surface p-5 transition-shadow duration-200 hover:shadow-panel"
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <h3 className="truncate font-semibold text-gray-900">{goal.name}</h3>
-                      <p className="mt-1 text-xs text-gray-400">
+                      <h4 className="truncate text-sm font-semibold text-ink">
+                        {goal.name}
+                      </h4>
+                      <p className="numeric mt-1 text-xs text-ink-3">
                         {goal.targetDate
                           ? `Target ${new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(`${goal.targetDate}T00:00:00`))}`
                           : "No target date"}
                       </p>
                     </div>
-                    <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+
+                    <span
+                      className={`numeric shrink-0 rounded-full border px-2 py-0.5 text-xs font-semibold ${
+                        complete
+                          ? "border-brand-line bg-brand-soft text-brand"
+                          : "border-hairline bg-surface-2 text-ink-2"
+                      }`}
+                    >
                       {percent.toFixed(0)}%
                     </span>
                   </div>
-                  <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-gray-100">
-                    <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${percent}%` }} />
+
+                  <div
+                    className="mt-4 h-2 overflow-hidden rounded-full bg-surface-3"
+                    role="img"
+                    aria-label={`${percent.toFixed(0)}% of ${currencyFormatter.format(goal.targetAmount)} saved`}
+                  >
+                    <div
+                      className="h-full rounded-full bg-brand transition-[width] duration-500 ease-out"
+                      style={{ width: `${percent}%` }}
+                    />
                   </div>
+
                   <div className="mt-4 flex items-end justify-between gap-3">
-                    <div>
-                      <p className="text-lg font-semibold text-gray-900">
+                    <div className="min-w-0">
+                      <p className="numeric text-base font-semibold text-ink">
                         {currencyFormatter.format(goal.currentAmount)}
-                        <span className="text-sm font-normal text-gray-400"> / {currencyFormatter.format(goal.targetAmount)}</span>
+                        <span className="text-sm font-normal text-ink-3">
+                          {" "}
+                          / {currencyFormatter.format(goal.targetAmount)}
+                        </span>
                       </p>
-                      <p className="mt-1 text-xs text-gray-400">{currencyFormatter.format(remaining)} remaining</p>
+                      <p className="numeric mt-1 text-xs text-ink-3">
+                        {currencyFormatter.format(remaining)} remaining
+                      </p>
                     </div>
-                    <div className="flex gap-1">
-                      <button type="button" onClick={() => startEditing(goal)} className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">Edit</button>
-                      <button type="button" onClick={() => deleteGoal(goal.id)} className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 hover:text-red-700">Delete</button>
+
+                    <div className="flex shrink-0 gap-1">
+                      <button
+                        type="button"
+                        onClick={() => startEditing(goal)}
+                        aria-label={`Edit ${goal.name}`}
+                        className="rounded-md px-2 py-1 text-xs font-medium text-ink-2 transition-colors duration-150 hover:bg-surface-3 hover:text-ink"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => deleteGoal(goal.id)}
+                        aria-label={`Delete ${goal.name}`}
+                        className="rounded-md px-2 py-1 text-xs font-medium text-critical transition-colors duration-150 hover:bg-critical-soft"
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
                 </article>
@@ -333,14 +411,16 @@ function SavingsGoalsContent({ user }: { user: AuthUser | null }) {
         )}
       </div>
 
-      {error && !formOpen && <p role="alert" className="mt-4 text-sm text-red-600">{error}</p>}
+      {error && !formOpen && (
+        <ErrorState title="Savings goals" message={error} className="mt-4" />
+      )}
 
-      <p className="mt-4 text-xs text-gray-400">
+      <p className="mt-5 border-t border-hairline pt-4 text-xs text-ink-3">
         {user
           ? "Goals are securely saved to your FinanceIQ account."
           : "Goals are saved only in this browser. Sign in to use separate account goals."}
       </p>
-    </section>
+    </Panel>
   );
 }
 

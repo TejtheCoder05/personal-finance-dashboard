@@ -26,10 +26,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    // The font variables live on <html> so the token layer in globals.css can
+    // resolve them from :root.
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className="antialiased">
         <AuthProvider>
           <DataSourceProvider>{children}</DataSourceProvider>
         </AuthProvider>

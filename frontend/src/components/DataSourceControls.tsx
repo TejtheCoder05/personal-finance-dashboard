@@ -14,12 +14,24 @@ import type {
   CsvColumnMapping,
   CsvValidationResult,
 } from "@/types/finance";
+import { Panel } from "@/components/ui/Panel";
+import { ErrorState } from "@/components/ui/States";
+import {
+  IconAlert,
+  IconCheck,
+  IconFile,
+  IconShield,
+  IconUpload,
+} from "@/components/ui/Icons";
 
 const emptyMapping: CsvColumnMapping = {
   date: "",
   description: "",
   amount: "",
 };
+
+const selectClass =
+  "mt-1.5 h-10 w-full rounded-lg border border-hairline bg-surface px-3 text-sm text-ink outline-none transition-colors duration-150 hover:border-hairline-strong focus:border-brand focus:ring-2 focus:ring-brand-line";
 
 export default function DataSourceControls() {
   const { user } = useAuth();
@@ -138,56 +150,104 @@ export default function DataSourceControls() {
     }
   }
 
+  // Demo, temporary upload and account-persisted data each get their own
+  // badge so the active source is legible at a glance rather than from a dot.
+  const source = restoring
+    ? {
+        label: "Loading your saved data…",
+        badge: "Restoring",
+        tone: "border-hairline bg-surface-2 text-ink-2",
+        icon: <IconFile size={14} />,
+      }
+    : persisted
+      ? {
+          label: "Your saved account data",
+          badge: "Saved to account",
+          tone: "border-brand-line bg-brand-soft text-brand",
+          icon: <IconShield size={14} />,
+        }
+      : dataset
+        ? {
+            label: "Your uploaded data",
+            badge: "Session only",
+            tone: "border-caution-line bg-caution-soft text-caution",
+            icon: <IconFile size={14} />,
+          }
+        : {
+            label: "Demo Mode",
+            badge: "Synthetic data",
+            tone: "border-hairline bg-surface-2 text-ink-2",
+            icon: <IconCheck size={14} />,
+          };
+
   return (
-    <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className={`h-2.5 w-2.5 rounded-full ${dataset ? "bg-blue-500" : "bg-emerald-500"}`} />
-            <p className="text-sm font-semibold text-gray-900">
-              {restoring
-                ? "Loading your saved data…"
-                : persisted
-                  ? "Your saved account data"
-                  : dataset
-                    ? "Your uploaded data"
-                    : "Demo Mode"}
-            </p>
+    <Panel>
+      <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-[0.9375rem] font-semibold tracking-tight text-ink">
+              {source.label}
+            </h3>
+
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${source.tone}`}
+            >
+              {source.icon}
+              {source.badge}
+            </span>
           </div>
-          <p className="mt-1 text-xs leading-5 text-gray-500">
+
+          <p className="numeric mt-1.5 text-sm leading-5 text-ink-3">
             {dataset
               ? `${dataset.filename} · ${dataset.transaction_count} processed transactions`
               : "Explore FinanceIQ safely with the built-in synthetic dataset."}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <label className="block min-w-0">
-            <span className="sr-only">Transaction CSV</span>
-            <input
-              ref={fileInput}
-              type="file"
-              accept=".csv,text/csv"
-              onChange={(event) => updateFile(event.target.files?.[0] ?? null)}
-              className="block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-gray-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-gray-700 hover:file:bg-gray-200"
-            />
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-2.5 sm:flex-row sm:items-center"
+        >
+          <input
+            ref={fileInput}
+            id="transaction-csv"
+            type="file"
+            accept=".csv,text/csv"
+            onChange={(event) => updateFile(event.target.files?.[0] ?? null)}
+            className="peer sr-only"
+          />
+
+          <label
+            htmlFor="transaction-csv"
+            className="inline-flex h-10 max-w-full cursor-pointer items-center gap-2 rounded-lg border border-dashed border-hairline-strong bg-surface-2 px-3.5 text-sm font-medium text-ink-2 transition-colors duration-150 hover:border-brand hover:bg-brand-soft hover:text-brand peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus"
+          >
+            <IconUpload size={16} className="shrink-0" />
+            <span className="truncate">
+              {file ? file.name : "Choose CSV file"}
+            </span>
           </label>
+
           <div className="flex gap-2">
             <button
               type="submit"
               disabled={working}
-              className="rounded-lg bg-[#111827] px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex h-10 items-center rounded-lg bg-ink px-4 text-sm font-semibold text-white transition-colors duration-150 hover:bg-nav-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {working
                 ? inspection ? "Processing…" : "Validating…"
                 : inspection ? "Process CSV" : "Validate CSV"}
             </button>
+
             {dataset && (
               <button
                 type="button"
                 onClick={removeUpload}
                 disabled={removing}
-                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+                className={`inline-flex h-10 items-center rounded-lg border px-4 text-sm font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60 ${
+                  persisted
+                    ? "border-critical-line bg-surface text-critical hover:bg-critical-soft"
+                    : "border-hairline bg-surface text-ink-2 hover:border-hairline-strong hover:bg-surface-2"
+                }`}
               >
                 {removing
                   ? "Removing…"
@@ -201,15 +261,27 @@ export default function DataSourceControls() {
       </div>
 
       {inspection && (
-        <div className="mt-5 border-t border-gray-100 pt-5">
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm font-semibold text-gray-800">Confirm column mapping</p>
-            <p className="text-xs text-gray-400">{inspection.row_count} rows found</p>
+        <div className="mt-5 border-t border-hairline pt-5">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+            <h4 className="text-sm font-semibold text-ink">
+              Confirm column mapping
+            </h4>
+            <p className="numeric text-xs text-ink-3">
+              {inspection.row_count} rows found
+            </p>
           </div>
+
+          <p className="mt-1 text-xs leading-5 text-ink-3">
+            FinanceIQ pre-selected the closest match for each field. Adjust any
+            that look wrong before processing.
+          </p>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {(["date", "description", "amount"] as const).map((field) => (
-              <label key={field} className="text-xs font-medium capitalize text-gray-600">
+              <label
+                key={field}
+                className="block text-[0.8125rem] font-medium capitalize text-ink-2"
+              >
                 {field} column
                 <select
                   value={mapping[field]}
@@ -217,7 +289,7 @@ export default function DataSourceControls() {
                     setMapping({ ...mapping, [field]: event.target.value });
                     setError(null);
                   }}
-                  className="mt-1.5 h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                  className={selectClass}
                 >
                   <option value="">Select column</option>
                   {inspection.columns.map((column) => (
@@ -227,7 +299,7 @@ export default function DataSourceControls() {
               </label>
             ))}
 
-            <label className="text-xs font-medium text-gray-600">
+            <label className="block text-[0.8125rem] font-medium text-ink-2">
               Purchase amount convention
               <select
                 value={amountSign}
@@ -235,7 +307,7 @@ export default function DataSourceControls() {
                   setAmountSign(event.target.value as AmountSign | "");
                   setError(null);
                 }}
-                className="mt-1.5 h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                className={selectClass}
               >
                 <option value="">Select convention</option>
                 <option value="purchase_positive">Purchases are positive</option>
@@ -245,27 +317,44 @@ export default function DataSourceControls() {
           </div>
 
           {inspection.warnings.length > 0 && (
-            <div className="mt-4 rounded-lg border border-amber-100 bg-amber-50 px-3 py-2">
-              {inspection.warnings.map((warning) => (
-                <p key={warning} className="text-xs leading-5 text-amber-800">{warning}</p>
-              ))}
+            <div className="mt-4 flex items-start gap-2.5 rounded-lg border border-caution-line bg-caution-soft px-3.5 py-3">
+              <IconAlert size={16} className="mt-px shrink-0 text-caution" />
+              <div>
+                {inspection.warnings.map((warning) => (
+                  <p key={warning} className="text-xs leading-5 text-caution">
+                    {warning}
+                  </p>
+                ))}
+              </div>
             </div>
           )}
 
-          <div className="mt-4 overflow-x-auto rounded-lg border border-gray-200">
-            <table className="w-full min-w-[600px] text-left text-xs">
-              <thead className="bg-gray-50 text-gray-500">
+          <div className="mt-4 overflow-x-auto rounded-lg border border-hairline">
+            <table className="w-full min-w-[37.5rem] text-left text-xs">
+              <caption className="sr-only">
+                Preview of the first rows of the uploaded CSV
+              </caption>
+              <thead className="bg-surface-2">
                 <tr>
                   {inspection.columns.map((column) => (
-                    <th key={column} className="whitespace-nowrap px-3 py-2 font-medium">{column}</th>
+                    <th
+                      key={column}
+                      scope="col"
+                      className="whitespace-nowrap border-b border-hairline px-3 py-2 font-semibold text-ink-2"
+                    >
+                      {column}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {inspection.preview.map((row, index) => (
-                  <tr key={index} className="border-t border-gray-100 text-gray-600">
+                  <tr key={index} className="border-b border-hairline last:border-0">
                     {inspection.columns.map((column) => (
-                      <td key={column} className="max-w-56 truncate whitespace-nowrap px-3 py-2">
+                      <td
+                        key={column}
+                        className="numeric max-w-56 truncate whitespace-nowrap px-3 py-2 text-ink-2"
+                      >
                         {row[column] === null ? "—" : String(row[column] ?? "")}
                       </td>
                     ))}
@@ -274,11 +363,14 @@ export default function DataSourceControls() {
               </tbody>
             </table>
           </div>
-          <p className="mt-2 text-xs text-gray-400">Previewing the first three rows. Confirm the mapping before processing.</p>
+
+          <p className="mt-2 text-xs text-ink-3">
+            Previewing the first three rows. Confirm the mapping before processing.
+          </p>
         </div>
       )}
 
-      <div className="mt-3 flex flex-col gap-1 border-t border-gray-100 pt-3 text-xs text-gray-400 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-4 flex flex-col gap-1 border-t border-hairline pt-3.5 text-xs text-ink-3 sm:flex-row sm:items-center sm:justify-between">
         <p>CSV only · 5 MB maximum · up to 10,000 transactions</p>
         <p>
           {user
@@ -287,9 +379,7 @@ export default function DataSourceControls() {
         </p>
       </div>
 
-      {error && (
-        <p role="alert" className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
-      )}
-    </section>
+      {error && <ErrorState title="Import problem" message={error} className="mt-4" />}
+    </Panel>
   );
 }

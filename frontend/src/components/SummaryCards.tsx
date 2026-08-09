@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { getSpendingSummary } from "@/lib/api";
 import type { SpendingSummary } from "@/types/finance";
 import { useDataSource } from "@/components/DataSourceProvider";
+import { ErrorState, LoadingRegion, Skeleton } from "@/components/ui/States";
+import { IconAlert } from "@/components/ui/Icons";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -12,6 +14,10 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 });
 
 const numberFormatter = new Intl.NumberFormat("en-US");
+
+// Stays 2-up until xl: at lg the sidebar leaves each of four columns too
+// narrow for a full currency value at this type size.
+const GRID = "grid gap-4 sm:grid-cols-2 xl:grid-cols-4";
 
 export default function SummaryCards() {
   const { dataset } = useDataSource();
@@ -42,29 +48,27 @@ export default function SummaryCards() {
 
   if (loading) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <LoadingRegion label="Loading spending summary" className={GRID}>
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
-            className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
+            className="rounded-panel border border-hairline bg-surface p-5 shadow-panel"
           >
-            <div className="h-4 w-28 animate-pulse rounded bg-gray-200" />
-            <div className="mt-4 h-9 w-32 animate-pulse rounded bg-gray-200" />
-            <div className="mt-3 h-3 w-36 animate-pulse rounded bg-gray-100" />
+            <Skeleton className="h-3.5 w-24" />
+            <Skeleton className="mt-4 h-8 w-32" />
+            <Skeleton className="mt-3 h-3 w-28" />
           </div>
         ))}
-      </div>
+      </LoadingRegion>
     );
   }
 
   if (error || !summary) {
     return (
-      <div className="rounded-2xl border border-red-200 bg-red-50 p-5">
-        <p className="text-sm font-semibold text-red-800">
-          Could not connect to the finance API
-        </p>
-        <p className="mt-1 text-sm text-red-600">{error}</p>
-      </div>
+      <ErrorState
+        title="Could not connect to the finance API"
+        message={error}
+      />
     );
   }
 
@@ -73,40 +77,69 @@ export default function SummaryCards() {
       label: "Total Spending",
       value: currencyFormatter.format(summary.total_spending),
       description: "Across all transactions",
+      alert: false,
     },
     {
       label: "Transactions",
       value: numberFormatter.format(summary.transaction_count),
       description: "Processed transactions",
+      alert: false,
     },
     {
       label: "Average Transaction",
       value: currencyFormatter.format(summary.average_transaction),
-      description: `Median: ${currencyFormatter.format(
+      description: `Median ${currencyFormatter.format(
         summary.median_transaction,
       )}`,
+      alert: false,
     },
     {
       label: "Anomalies Detected",
       value: numberFormatter.format(summary.anomaly_count),
       description: `${(summary.anomaly_rate * 100).toFixed(1)}% anomaly rate`,
+      // The one risk metric in the row: flagged with a rule and an icon, not
+      // colour alone, so it reads as different in greyscale too.
+      alert: summary.anomaly_count > 0,
     },
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className={GRID}>
       {metrics.map((metric) => (
         <div
           key={metric.label}
-          className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
+          className={`relative overflow-hidden rounded-panel border border-hairline bg-surface p-5 shadow-panel transition-shadow duration-200 hover:shadow-raised ${
+            metric.alert ? "border-caution-line" : ""
+          }`}
         >
-          <p className="text-sm font-medium text-gray-500">{metric.label}</p>
+          {metric.alert && (
+            <span
+              aria-hidden="true"
+              className="absolute inset-y-0 left-0 w-1 bg-caution"
+            />
+          )}
 
-          <p className="mt-3 text-3xl font-semibold tracking-tight text-gray-900">
+          <div className="flex items-center gap-1.5">
+            <p className="text-[0.8125rem] font-medium text-ink-2">
+              {metric.label}
+            </p>
+
+            {metric.alert && (
+              <IconAlert size={13} className="shrink-0 text-caution" />
+            )}
+          </div>
+
+          <p className="numeric mt-3 text-[1.75rem] font-semibold leading-none tracking-tight text-ink">
             {metric.value}
           </p>
 
-          <p className="mt-2 text-xs text-gray-400">{metric.description}</p>
+          <p
+            className={`numeric mt-2.5 text-xs ${
+              metric.alert ? "font-medium text-caution" : "text-ink-3"
+            }`}
+          >
+            {metric.description}
+          </p>
         </div>
       ))}
     </div>

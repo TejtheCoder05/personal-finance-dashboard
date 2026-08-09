@@ -1,11 +1,20 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { useAuth } from "@/components/AuthProvider";
+import { IconClose } from "@/components/ui/Icons";
 
 type AuthMode = "login" | "register";
+
+const fieldClass =
+  "mt-1.5 h-10 w-full rounded-lg border border-hairline bg-surface px-3 text-sm text-ink outline-none transition-colors duration-150 hover:border-hairline-strong focus:border-brand focus:ring-2 focus:ring-brand-line";
+
+const labelClass = "block text-[0.8125rem] font-medium text-ink-2";
+
+const FOCUSABLE =
+  'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
 export default function AuthControls({ compact = false }: { compact?: boolean }) {
   const { user, loading, sessionError, login, register, logout } = useAuth();
@@ -16,7 +25,21 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+  // Mirrored so the Escape handler can read the latest value without the
+  // effect depending on `submitting` and re-running (which would steal focus
+  // back to the email field mid-submit).
+  const submittingRef = useRef(false);
+
+  function updateSubmitting(next: boolean) {
+    submittingRef.current = next;
+    setSubmitting(next);
+  }
+
   function open(nextMode: AuthMode) {
+    triggerRef.current = document.activeElement as HTMLElement | null;
     setMode(nextMode);
     setPassword("");
     setConfirmPassword("");
@@ -29,6 +52,57 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
       setError(null);
     }
   }
+
+  // Escape to dismiss, focus into the dialog on open, focus back to the
+  // trigger on close, and Tab kept inside the dialog while it is open.
+  useEffect(() => {
+    if (!mode) {
+      return;
+    }
+
+    emailRef.current?.focus();
+
+    const { overflow } = document.body.style;
+    document.body.style.overflow = "hidden";
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape" && !submittingRef.current) {
+        setMode(null);
+        setError(null);
+        return;
+      }
+
+      if (event.key !== "Tab" || !dialogRef.current) {
+        return;
+      }
+
+      const focusable = Array.from(
+        dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE),
+      );
+      if (focusable.length === 0) {
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = overflow;
+      triggerRef.current?.focus();
+    };
+  }, [mode]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -51,7 +125,7 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
     }
 
     try {
-      setSubmitting(true);
+      updateSubmitting(true);
       setError(null);
       if (mode === "register") {
         await register(email, password);
@@ -69,13 +143,13 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
           : "Authentication failed. Please try again.",
       );
     } finally {
-      setSubmitting(false);
+      updateSubmitting(false);
     }
   }
 
   async function handleLogout() {
     try {
-      setSubmitting(true);
+      updateSubmitting(true);
       setError(null);
       await logout();
     } catch (logoutError) {
@@ -83,30 +157,44 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
         logoutError instanceof Error ? logoutError.message : "Could not log out.",
       );
     } finally {
-      setSubmitting(false);
+      updateSubmitting(false);
     }
   }
 
   if (loading) {
-    return <div className="h-9 w-40 animate-pulse rounded-lg bg-gray-100" />;
+    return (
+      <div
+        role="status"
+        aria-busy="true"
+        className="h-9 w-40 animate-pulse rounded-lg bg-surface-3"
+      >
+        <span className="sr-only">Checking your session</span>
+      </div>
+    );
   }
 
   return (
     <>
-      <div className={compact ? "space-y-3" : "flex items-center gap-2"}>
+      <div className={compact ? "space-y-3" : "flex items-center gap-3"}>
         {user ? (
-          <div className={compact ? "space-y-2" : "flex items-center gap-2"}>
-            <div className={compact ? "rounded-xl bg-gray-50 px-3 py-2" : "text-right"}>
-              <p className="max-w-56 truncate text-xs font-semibold text-gray-700">
+          <div className={compact ? "space-y-2.5" : "flex items-center gap-3"}>
+            <div
+              className={
+                compact
+                  ? "rounded-lg border border-hairline bg-surface-2 px-3 py-2"
+                  : "text-right"
+              }
+            >
+              <p className="max-w-56 truncate text-[0.8125rem] font-semibold text-ink">
                 {user.email}
               </p>
-              <p className="text-[11px] text-gray-400">Authenticated account</p>
+              <p className="text-[0.6875rem] text-ink-3">Authenticated account</p>
             </div>
             <button
               type="button"
               onClick={handleLogout}
               disabled={submitting}
-              className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-600 transition hover:bg-gray-50 disabled:opacity-60"
+              className="inline-flex h-9 items-center rounded-lg border border-hairline bg-surface px-3 text-[0.8125rem] font-semibold text-ink-2 transition-colors duration-150 hover:border-hairline-strong hover:bg-surface-2 disabled:opacity-60"
             >
               {submitting ? "Logging out…" : "Log out"}
             </button>
@@ -116,21 +204,23 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
             <button
               type="button"
               onClick={() => open("login")}
-              className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-600 transition hover:bg-gray-50"
+              className="inline-flex h-9 items-center rounded-lg border border-hairline bg-surface px-3.5 text-[0.8125rem] font-semibold text-ink-2 transition-colors duration-150 hover:border-hairline-strong hover:bg-surface-2"
             >
               Log in
             </button>
             <button
               type="button"
               onClick={() => open("register")}
-              className="rounded-lg bg-emerald-500 px-3 py-2 text-xs font-semibold text-white transition hover:bg-emerald-600"
+              className="inline-flex h-9 items-center rounded-lg bg-brand px-3.5 text-[0.8125rem] font-semibold text-white transition-colors duration-150 hover:bg-brand-strong"
             >
               Create account
             </button>
           </div>
         )}
         {(error || sessionError) && !mode && (
-          <p role="alert" className="text-xs text-red-600">{error ?? sessionError}</p>
+          <p role="alert" className="text-xs font-medium text-critical">
+            {error ?? sessionError}
+          </p>
         )}
       </div>
 
@@ -141,43 +231,60 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
         header instead of the viewport.
       */}
       {mode && typeof document !== "undefined" && createPortal(
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-950/50 p-4 backdrop-blur-sm" onMouseDown={close}>
+        <div
+          className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/50 p-4 backdrop-blur-sm"
+          onMouseDown={close}
+        >
           <div className="flex min-h-full items-center justify-center">
             <div
+              ref={dialogRef}
               role="dialog"
               aria-modal="true"
               aria-labelledby="auth-title"
               onMouseDown={(event) => event.stopPropagation()}
-              className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 text-left shadow-2xl"
+              className="w-full max-w-md rounded-panel border border-hairline bg-surface p-6 text-left shadow-overlay"
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-sm font-medium text-emerald-600">FinanceIQ Account</p>
-                  <h2 id="auth-title" className="mt-1 text-2xl font-semibold tracking-tight text-gray-900">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-brand">
+                    FinanceIQ Account
+                  </p>
+                  <h2
+                    id="auth-title"
+                    className="mt-2 text-xl font-semibold tracking-tight text-ink"
+                  >
                     {mode === "login" ? "Welcome back" : "Create your account"}
                   </h2>
-                  <p className="mt-2 text-sm leading-6 text-gray-500">
+                  <p className="mt-1.5 text-sm leading-6 text-ink-3">
                     {mode === "login"
                       ? "Log in to access your persistent FinanceIQ data."
                       : "Create an account for persistent goals and transaction data."}
                   </p>
                 </div>
-                <button type="button" onClick={close} aria-label="Close authentication dialog" className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700">✕</button>
+                <button
+                  type="button"
+                  onClick={close}
+                  aria-label="Close authentication dialog"
+                  className="-mr-1.5 -mt-1.5 rounded-lg p-2 text-ink-3 transition-colors duration-150 hover:bg-surface-3 hover:text-ink"
+                >
+                  <IconClose size={18} />
+                </button>
               </div>
 
               <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className={labelClass}>
                   Email
                   <input
+                    ref={emailRef}
                     type="email"
                     autoComplete="email"
                     required
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    className="mt-1.5 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                    className={fieldClass}
                   />
                 </label>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className={labelClass}>
                   Password
                   <input
                     type="password"
@@ -187,13 +294,18 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
                     maxLength={128}
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
-                    className="mt-1.5 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                    aria-describedby={
+                      mode === "register" ? "password-help" : undefined
+                    }
+                    className={fieldClass}
                   />
                 </label>
                 {mode === "register" && (
                   <>
-                    <p className="text-xs leading-5 text-gray-400">Use 12–128 characters with at least one letter and one number.</p>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <p id="password-help" className="text-xs leading-5 text-ink-3">
+                      Use 12–128 characters with at least one letter and one number.
+                    </p>
+                    <label className={labelClass}>
                       Confirm password
                       <input
                         type="password"
@@ -203,18 +315,33 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
                         maxLength={128}
                         value={confirmPassword}
                         onChange={(event) => setConfirmPassword(event.target.value)}
-                        className="mt-1.5 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                        className={fieldClass}
                       />
                     </label>
                   </>
                 )}
-                {error && <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
-                <button type="submit" disabled={submitting} className="w-full rounded-lg bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-700 disabled:opacity-60">
+                {error && (
+                  <p
+                    role="alert"
+                    className="rounded-lg border border-critical-line bg-critical-soft px-3 py-2 text-sm font-medium text-critical"
+                  >
+                    {error}
+                  </p>
+                )}
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-ink px-4 text-sm font-semibold text-white transition-colors duration-150 hover:bg-nav-2 disabled:opacity-60"
+                >
                   {submitting ? "Please wait…" : mode === "login" ? "Log in" : "Create account"}
                 </button>
               </form>
 
-              <button type="button" onClick={() => open(mode === "login" ? "register" : "login")} className="mt-4 w-full text-center text-sm font-medium text-emerald-600 hover:text-emerald-700">
+              <button
+                type="button"
+                onClick={() => open(mode === "login" ? "register" : "login")}
+                className="mt-4 w-full rounded-lg py-1 text-center text-sm font-medium text-brand transition-colors duration-150 hover:text-brand-strong"
+              >
                 {mode === "login" ? "Need an account? Create one" : "Already have an account? Log in"}
               </button>
             </div>
