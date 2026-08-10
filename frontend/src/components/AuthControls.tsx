@@ -9,7 +9,7 @@ import { IconClose } from "@/components/ui/Icons";
 type AuthMode = "login" | "register";
 
 const fieldClass =
-  "mt-1.5 h-10 w-full rounded-lg border border-hairline bg-surface px-3 text-sm text-ink outline-none transition-colors duration-150 hover:border-hairline-strong focus:border-brand focus:ring-2 focus:ring-brand-line";
+  "mt-1.5 h-11 w-full rounded-xl border border-hairline bg-inset px-3.5 text-sm text-ink outline-none transition-colors duration-150 hover:border-hairline-strong focus:border-brand focus:ring-2 focus:ring-brand-line";
 
 const labelClass = "block text-[0.8125rem] font-medium text-ink-2";
 
@@ -166,7 +166,7 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
       <div
         role="status"
         aria-busy="true"
-        className="h-9 w-40 animate-pulse rounded-lg bg-surface-3"
+        className="h-9 w-40 animate-pulse rounded-full bg-surface-3"
       >
         <span className="sr-only">Checking your session</span>
       </div>
@@ -178,23 +178,36 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
       <div className={compact ? "space-y-3" : "flex items-center gap-3"}>
         {user ? (
           <div className={compact ? "space-y-2.5" : "flex items-center gap-3"}>
+            {/* Avatar + identity block, echoing the reference's header. */}
             <div
-              className={
+              className={`flex items-center gap-2.5 ${
                 compact
-                  ? "rounded-lg border border-hairline bg-surface-2 px-3 py-2"
-                  : "text-right"
-              }
+                  ? "rounded-xl border border-hairline bg-surface-2 px-3 py-2.5"
+                  : ""
+              }`}
             >
-              <p className="max-w-56 truncate text-[0.8125rem] font-semibold text-ink">
-                {user.email}
-              </p>
-              <p className="text-[0.6875rem] text-ink-3">Authenticated account</p>
+              <span
+                aria-hidden="true"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-brand-line bg-brand-soft text-sm font-semibold text-brand"
+              >
+                {user.email.charAt(0).toUpperCase()}
+              </span>
+
+              <div className="min-w-0">
+                <p className="max-w-48 truncate text-[0.8125rem] font-semibold text-ink">
+                  {user.email}
+                </p>
+                <p className="text-[0.6875rem] text-ink-3">
+                  Authenticated account
+                </p>
+              </div>
             </div>
+
             <button
               type="button"
               onClick={handleLogout}
               disabled={submitting}
-              className="inline-flex h-9 items-center rounded-lg border border-hairline bg-surface px-3 text-[0.8125rem] font-semibold text-ink-2 transition-colors duration-150 hover:border-hairline-strong hover:bg-surface-2 disabled:opacity-60"
+              className="inline-flex h-9 shrink-0 items-center rounded-full border border-hairline bg-surface-2 px-4 text-[0.8125rem] font-medium text-ink-2 transition-colors duration-150 hover:border-hairline-strong hover:text-ink disabled:opacity-60"
             >
               {submitting ? "Logging out…" : "Log out"}
             </button>
@@ -204,14 +217,14 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
             <button
               type="button"
               onClick={() => open("login")}
-              className="inline-flex h-9 items-center rounded-lg border border-hairline bg-surface px-3.5 text-[0.8125rem] font-semibold text-ink-2 transition-colors duration-150 hover:border-hairline-strong hover:bg-surface-2"
+              className="inline-flex h-9 items-center rounded-full border border-hairline bg-surface-2 px-4 text-[0.8125rem] font-medium text-ink-2 transition-colors duration-150 hover:border-hairline-strong hover:text-ink"
             >
               Log in
             </button>
             <button
               type="button"
               onClick={() => open("register")}
-              className="inline-flex h-9 items-center rounded-lg bg-brand px-3.5 text-[0.8125rem] font-semibold text-white transition-colors duration-150 hover:bg-brand-strong"
+              className="inline-flex h-9 items-center rounded-full bg-brand px-4 text-[0.8125rem] font-semibold text-brand-ink transition-colors duration-150 hover:bg-brand-strong"
             >
               Create account
             </button>
@@ -232,7 +245,7 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
       */}
       {mode && typeof document !== "undefined" && createPortal(
         <div
-          className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/50 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 overflow-y-auto bg-black/70 p-4 backdrop-blur-sm"
           onMouseDown={close}
         >
           <div className="flex min-h-full items-center justify-center">
@@ -242,11 +255,16 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
               aria-modal="true"
               aria-labelledby="auth-title"
               onMouseDown={(event) => event.stopPropagation()}
-              className="w-full max-w-md rounded-panel border border-hairline bg-surface p-6 text-left shadow-overlay"
+              className="relative w-full max-w-md overflow-hidden rounded-panel border border-hairline bg-surface p-6 text-left shadow-overlay"
             >
-              <div className="flex items-start justify-between gap-4">
+              <span
+                aria-hidden="true"
+                className="bloom pointer-events-none absolute inset-x-0 -top-24 h-48 rotate-180"
+              />
+
+              <div className="relative flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-brand">
+                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-brand">
                     FinanceIQ Account
                   </p>
                   <h2
@@ -265,13 +283,13 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
                   type="button"
                   onClick={close}
                   aria-label="Close authentication dialog"
-                  className="-mr-1.5 -mt-1.5 rounded-lg p-2 text-ink-3 transition-colors duration-150 hover:bg-surface-3 hover:text-ink"
+                  className="-mr-1.5 -mt-1.5 rounded-full border border-hairline bg-surface-2 p-2 text-ink-3 transition-colors duration-150 hover:border-hairline-strong hover:text-ink"
                 >
                   <IconClose size={18} />
                 </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+              <form onSubmit={handleSubmit} className="relative mt-6 space-y-4">
                 <label className={labelClass}>
                   Email
                   <input
@@ -323,7 +341,7 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
                 {error && (
                   <p
                     role="alert"
-                    className="rounded-lg border border-critical-line bg-critical-soft px-3 py-2 text-sm font-medium text-critical"
+                    className="rounded-xl border border-critical-line bg-critical-soft px-3.5 py-2.5 text-sm font-medium text-critical"
                   >
                     {error}
                   </p>
@@ -331,7 +349,7 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-ink px-4 text-sm font-semibold text-white transition-colors duration-150 hover:bg-nav-2 disabled:opacity-60"
+                  className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-brand px-4 text-sm font-semibold text-brand-ink transition-colors duration-150 hover:bg-brand-strong disabled:opacity-60"
                 >
                   {submitting ? "Please wait…" : mode === "login" ? "Log in" : "Create account"}
                 </button>
@@ -340,7 +358,7 @@ export default function AuthControls({ compact = false }: { compact?: boolean })
               <button
                 type="button"
                 onClick={() => open(mode === "login" ? "register" : "login")}
-                className="mt-4 w-full rounded-lg py-1 text-center text-sm font-medium text-brand transition-colors duration-150 hover:text-brand-strong"
+                className="relative mt-4 w-full rounded-lg py-1 text-center text-sm font-medium text-brand transition-colors duration-150 hover:text-brand-strong"
               >
                 {mode === "login" ? "Need an account? Create one" : "Already have an account? Log in"}
               </button>

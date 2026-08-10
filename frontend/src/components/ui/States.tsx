@@ -7,7 +7,7 @@ import { IconInbox, IconWarning } from "@/components/ui/Icons";
 
 export function Skeleton({ className = "" }: { className?: string }) {
   return (
-    <div className={`animate-pulse rounded bg-surface-3 ${className}`} />
+    <div className={`animate-pulse rounded-md bg-surface-3 ${className}`} />
   );
 }
 
@@ -44,7 +44,7 @@ export function ErrorState({
   return (
     <div
       role="alert"
-      className={`flex items-start gap-3 rounded-lg border border-critical-line bg-critical-soft p-4 ${className}`}
+      className={`flex items-start gap-3 rounded-xl border border-critical-line bg-critical-soft p-4 ${className}`}
     >
       <IconWarning size={18} className="mt-px shrink-0 text-critical" />
 
@@ -72,9 +72,9 @@ export function EmptyState({
 }) {
   return (
     <div
-      className={`flex flex-col items-center justify-center rounded-lg border border-dashed border-hairline-strong bg-surface-2 px-6 py-10 text-center ${className}`}
+      className={`flex flex-col items-center justify-center rounded-xl border border-dashed border-hairline-strong bg-inset px-6 py-10 text-center ${className}`}
     >
-      <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-surface text-ink-3 shadow-panel">
+      <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-full border border-hairline bg-surface-2 text-ink-3">
         {icon ?? <IconInbox size={18} />}
       </span>
 

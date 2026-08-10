@@ -87,16 +87,19 @@ export default function TopMerchants() {
 
   return (
     <div>
-      <ol className="space-y-5">
+      <ol className="-mt-1">
         {topMerchants.map((merchant, index) => {
           const widthPercentage =
             (merchant.total_spending / highestSpending) * 100;
 
           return (
-            <li key={merchant.merchant}>
+            <li
+              key={merchant.merchant}
+              className="border-b border-hairline py-3.5 last:border-0"
+            >
               <div className="mb-2.5 flex items-start justify-between gap-4">
                 <div className="flex min-w-0 items-center gap-3">
-                  <span className="numeric flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-hairline bg-surface-2 text-xs font-semibold text-ink-2">
+                  <span className="numeric flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-hairline bg-inset text-xs font-semibold text-ink-2">
                     {index + 1}
                   </span>
 
@@ -123,7 +126,7 @@ export default function TopMerchants() {
                 </div>
 
                 <div className="shrink-0 text-right">
-                  <p className="numeric text-sm font-semibold text-ink">
+                  <p className="numeric text-[0.9375rem] font-semibold text-ink">
                     {currencyFormatter.format(
                       merchant.total_spending,
                     )}
@@ -139,7 +142,7 @@ export default function TopMerchants() {
               </div>
 
               <div
-                className="ml-10 h-1.5 overflow-hidden rounded-full bg-surface-3"
+                className="ml-11 h-1 overflow-hidden rounded-full bg-inset"
                 role="img"
                 aria-label={`${widthPercentage.toFixed(
                   0,
@@ -157,7 +160,7 @@ export default function TopMerchants() {
         })}
       </ol>
 
-      <p className="numeric mt-5 border-t border-hairline pt-4 text-xs text-ink-3">
+      <p className="numeric mt-4 text-xs text-ink-3">
         Showing top 5 of {merchants.length} merchants by total spending
       </p>
     </div>

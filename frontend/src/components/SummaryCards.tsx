@@ -55,7 +55,7 @@ export default function SummaryCards() {
             className="rounded-panel border border-hairline bg-surface p-5 shadow-panel"
           >
             <Skeleton className="h-3.5 w-24" />
-            <Skeleton className="mt-4 h-8 w-32" />
+            <Skeleton className="mt-5 h-9 w-32" />
             <Skeleton className="mt-3 h-3 w-28" />
           </div>
         ))}
@@ -78,12 +78,15 @@ export default function SummaryCards() {
       value: currencyFormatter.format(summary.total_spending),
       description: "Across all transactions",
       alert: false,
+      // Headline figure of the row — gets the accent bloom.
+      lead: true,
     },
     {
       label: "Transactions",
       value: numberFormatter.format(summary.transaction_count),
       description: "Processed transactions",
       alert: false,
+      lead: false,
     },
     {
       label: "Average Transaction",
@@ -92,14 +95,16 @@ export default function SummaryCards() {
         summary.median_transaction,
       )}`,
       alert: false,
+      lead: false,
     },
     {
       label: "Anomalies Detected",
       value: numberFormatter.format(summary.anomaly_count),
       description: `${(summary.anomaly_rate * 100).toFixed(1)}% anomaly rate`,
-      // The one risk metric in the row: flagged with a rule and an icon, not
+      // The one risk metric in the row: flagged with a border and an icon, not
       // colour alone, so it reads as different in greyscale too.
       alert: summary.anomaly_count > 0,
+      lead: false,
     },
   ];
 
@@ -108,18 +113,21 @@ export default function SummaryCards() {
       {metrics.map((metric) => (
         <div
           key={metric.label}
-          className={`relative overflow-hidden rounded-panel border border-hairline bg-surface p-5 shadow-panel transition-shadow duration-200 hover:shadow-raised ${
-            metric.alert ? "border-caution-line" : ""
+          className={`group relative overflow-hidden rounded-panel border bg-surface p-5 shadow-panel transition-colors duration-200 ${
+            metric.alert
+              ? "border-caution-line"
+              : "border-hairline hover:border-hairline-strong"
           }`}
         >
-          {metric.alert && (
+          {/* The lead metric carries the accent bloom, as in the reference. */}
+          {metric.lead && (
             <span
               aria-hidden="true"
-              className="absolute inset-y-0 left-0 w-1 bg-caution"
+              className="bloom pointer-events-none absolute inset-x-0 -bottom-6 h-24"
             />
           )}
 
-          <div className="flex items-center gap-1.5">
+          <div className="relative flex items-center gap-1.5">
             <p className="text-[0.8125rem] font-medium text-ink-2">
               {metric.label}
             </p>
@@ -129,12 +137,12 @@ export default function SummaryCards() {
             )}
           </div>
 
-          <p className="numeric mt-3 text-[1.75rem] font-semibold leading-none tracking-tight text-ink">
+          <p className="numeric relative mt-4 text-[2rem] font-semibold leading-none tracking-[-0.02em] text-ink">
             {metric.value}
           </p>
 
           <p
-            className={`numeric mt-2.5 text-xs ${
+            className={`numeric relative mt-3 text-xs ${
               metric.alert ? "font-medium text-caution" : "text-ink-3"
             }`}
           >

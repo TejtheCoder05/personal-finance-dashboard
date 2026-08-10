@@ -27,7 +27,7 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 });
 
 const fieldClass =
-  "mt-1.5 h-10 w-full rounded-lg border border-hairline bg-surface px-3 text-sm text-ink outline-none transition-colors duration-150 placeholder:text-ink-3 hover:border-hairline-strong focus:border-brand focus:ring-2 focus:ring-brand-line";
+  "mt-1.5 h-11 w-full rounded-xl border border-hairline bg-inset px-3.5 text-sm text-ink outline-none transition-colors duration-150 placeholder:text-ink-3 hover:border-hairline-strong focus:border-brand focus:ring-2 focus:ring-brand-line";
 
 const labelClass = "block text-[0.8125rem] font-medium text-ink-2";
 
@@ -222,7 +222,7 @@ function SavingsGoalsContent({ user }: { user: AuthUser | null }) {
               setFormOpen(true);
             }
           }}
-          className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg bg-brand px-3.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-brand-strong"
+          className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-brand px-4 text-sm font-semibold text-brand-ink transition-colors duration-150 hover:bg-brand-strong"
         >
           {formOpen ? <IconClose size={15} /> : <IconPlus size={15} />}
           {formOpen ? "Cancel" : "Add goal"}
@@ -232,7 +232,7 @@ function SavingsGoalsContent({ user }: { user: AuthUser | null }) {
       {formOpen && (
         <form
           onSubmit={handleSubmit}
-          className="mt-5 rounded-lg border border-hairline bg-surface-2 p-4 sm:p-5"
+          className="mt-5 rounded-xl border border-hairline bg-inset p-4 sm:p-5"
         >
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <label className={labelClass}>
@@ -292,7 +292,7 @@ function SavingsGoalsContent({ user }: { user: AuthUser | null }) {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex h-9 items-center rounded-lg bg-ink px-4 text-sm font-semibold text-white transition-colors duration-150 hover:bg-nav-2 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex h-9 items-center rounded-full bg-brand px-4 text-sm font-semibold text-brand-ink transition-colors duration-150 hover:bg-brand-strong disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? "Saving…" : editingId ? "Save changes" : "Create goal"}
             </button>
@@ -311,7 +311,7 @@ function SavingsGoalsContent({ user }: { user: AuthUser | null }) {
             {Array.from({ length: 3 }).map((_, index) => (
               <div
                 key={index}
-                className="rounded-lg border border-hairline p-5"
+                className="rounded-xl border border-hairline bg-inset p-5"
               >
                 <Skeleton className="h-4 w-32" />
                 <Skeleton className="mt-4 h-2 w-full rounded-full" />
@@ -335,7 +335,7 @@ function SavingsGoalsContent({ user }: { user: AuthUser | null }) {
               return (
                 <article
                   key={goal.id}
-                  className="rounded-lg border border-hairline bg-surface p-5 transition-shadow duration-200 hover:shadow-panel"
+                  className="rounded-xl border border-hairline bg-inset p-5 transition-colors duration-200 hover:border-hairline-strong"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -361,7 +361,7 @@ function SavingsGoalsContent({ user }: { user: AuthUser | null }) {
                   </div>
 
                   <div
-                    className="mt-4 h-2 overflow-hidden rounded-full bg-surface-3"
+                    className="mt-4 h-1.5 overflow-hidden rounded-full bg-surface-3"
                     role="img"
                     aria-label={`${percent.toFixed(0)}% of ${currencyFormatter.format(goal.targetAmount)} saved`}
                   >

@@ -1,28 +1,31 @@
 /*
   One colour per spending category, shared by the donut chart, the transaction
-  chips and the mobile cards. Previously the donut coloured slices by array
-  index while the table coloured chips by name, so the same category could be
-  violet in one panel and amber in another.
+  chips and the mobile cards, so a category never reads as two different
+  colours on the same screen.
 
-  Hue assignments preserve the mapping the table already used. Categories the
-  ML model produces outside the known list get a stable colour from the same
-  ramp via a content hash, so they never shift between renders.
+  Tuned for the dark theme: every mark is >= 3:1 against --color-surface and
+  every chip's text is >= 4.5:1 against its own tint. Hue assignments preserve
+  the mapping the transaction table has always used. Categories the ML model
+  produces outside the known list get a stable colour from the same ramp via a
+  content hash, so they never shift between renders.
 */
 
 export interface CategoryColor {
-  /** Solid fill for chart marks. Every value is >= 3:1 against white. */
+  /** Solid fill for chart marks. */
   hex: string;
-  /** Tailwind classes for a soft chip; text side is >= 4.5:1 on its own tint. */
+  /** Tailwind classes for a soft chip. */
   chip: string;
+  /** Bare colour for dots and rules. */
+  dot: string;
 }
 
 const RAMP: CategoryColor[] = [
-  { hex: "#0d9488", chip: "bg-teal-50 text-teal-800" },
-  { hex: "#2563eb", chip: "bg-blue-50 text-blue-800" },
-  { hex: "#b45309", chip: "bg-amber-50 text-amber-800" },
-  { hex: "#7c3aed", chip: "bg-violet-50 text-violet-800" },
-  { hex: "#be123c", chip: "bg-rose-50 text-rose-800" },
-  { hex: "#64748b", chip: "bg-slate-100 text-slate-700" },
+  { hex: "#5fd99a", chip: "bg-[#13251d] text-[#5fd99a]", dot: "#5fd99a" },
+  { hex: "#8fb6f5", chip: "bg-[#1a2133] text-[#8fb6f5]", dot: "#8fb6f5" },
+  { hex: "#f0c063", chip: "bg-[#2a2113] text-[#f0c063]", dot: "#f0c063" },
+  { hex: "#b79ae8", chip: "bg-[#241f36] text-[#b79ae8]", dot: "#b79ae8" },
+  { hex: "#e6a8d6", chip: "bg-[#2b1f2b] text-[#e6a8d6]", dot: "#e6a8d6" },
+  { hex: "#a49ab0", chip: "bg-[#221f26] text-[#a49ab0]", dot: "#a49ab0" },
 ];
 
 const NAMED: Record<string, CategoryColor> = {

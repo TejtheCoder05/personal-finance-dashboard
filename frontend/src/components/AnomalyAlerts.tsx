@@ -62,7 +62,7 @@ function getSeverity(score: number) {
   return {
     label: "Moderate",
     chip: "border-hairline bg-surface-2 text-ink-2",
-    rule: "bg-hairline-strong",
+    rule: "bg-ink-3",
   };
 }
 
@@ -97,7 +97,7 @@ export default function AnomalyAlerts() {
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
-            className="rounded-lg border border-hairline p-4"
+            className="rounded-xl border border-hairline p-4"
           >
             <div className="flex justify-between gap-4">
               <Skeleton className="h-4 w-36" />
@@ -137,7 +137,7 @@ export default function AnomalyAlerts() {
           return (
             <li
               key={`${anomaly.date}-${anomaly.merchant}-${anomaly.amount}`}
-              className="relative overflow-hidden rounded-lg border border-hairline bg-surface p-4 transition-colors duration-200 hover:border-hairline-strong hover:bg-surface-2"
+              className="relative overflow-hidden rounded-xl border border-hairline bg-inset p-4 transition-colors duration-200 hover:border-hairline-strong hover:bg-surface-2"
             >
               <span
                 aria-hidden="true"
@@ -151,7 +151,7 @@ export default function AnomalyAlerts() {
                       {formatMerchantName(anomaly.merchant)}
                     </p>
 
-                    <span className="rounded-full border border-hairline bg-surface-2 px-2 py-0.5 text-[0.6875rem] font-medium text-ink-2">
+                    <span className="rounded-full border border-hairline bg-surface-2 px-2.5 py-0.5 text-[0.6875rem] font-medium text-ink-2">
                       {anomaly.category}
                     </span>
                   </div>

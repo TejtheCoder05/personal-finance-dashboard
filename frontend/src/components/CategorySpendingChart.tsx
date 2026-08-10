@@ -121,8 +121,8 @@ export default function CategorySpendingChart() {
               innerRadius={56}
               outerRadius={80}
               paddingAngle={2}
-              stroke="#ffffff"
-              strokeWidth={2}
+              stroke="#17141b"
+              strokeWidth={3}
               isAnimationActive={!reducedMotion}
             >
               {data.map((category) => (
@@ -146,13 +146,14 @@ export default function CategorySpendingChart() {
               }}
               contentStyle={{
                 borderRadius: "0.5rem",
-                border: "1px solid #e3e8ef",
-                boxShadow: "0 12px 20px -6px rgb(15 23 42 / 0.12)",
+                border: "1px solid #372f3c",
+                background: "#1e1a23",
+                boxShadow: "0 16px 32px -8px rgb(0 0 0 / 0.7)",
                 padding: "0.5rem 0.75rem",
                 fontSize: "0.8125rem",
               }}
               labelStyle={{ display: "none" }}
-              itemStyle={{ color: "#0f172a" }}
+              itemStyle={{ color: "#f4f1f7" }}
             />
           </PieChart>
         </ResponsiveContainer>
@@ -182,7 +183,7 @@ export default function CategorySpendingChart() {
           >
             <dt className="flex min-w-0 items-center gap-2.5">
               <span
-                className="h-2.5 w-2.5 shrink-0 rounded-[3px]"
+                className="h-2.5 w-2.5 shrink-0 rounded-full"
                 style={{
                   backgroundColor: getCategoryColor(category.category).hex,
                 }}

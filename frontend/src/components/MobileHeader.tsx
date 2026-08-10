@@ -11,10 +11,10 @@ export default function MobileHeader() {
   const active = useActiveSection(NAV_TARGET_IDS);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-hairline bg-surface/95 backdrop-blur lg:hidden">
+    <header className="sticky top-0 z-40 border-b border-hairline bg-canvas/90 backdrop-blur lg:hidden">
       <div className="flex h-16 items-center justify-between px-4 sm:px-5">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-nav text-sm font-bold text-white">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-sm font-bold text-brand-ink">
             F
           </span>
 
@@ -35,7 +35,7 @@ export default function MobileHeader() {
           aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
           aria-expanded={menuOpen}
           aria-controls="mobile-nav"
-          className="flex h-10 w-10 items-center justify-center rounded-lg border border-hairline bg-surface text-ink-2 transition-colors duration-150 hover:border-hairline-strong hover:bg-surface-2"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-hairline bg-surface-2 text-ink-2 transition-colors duration-150 hover:border-hairline-strong hover:text-ink"
         >
           {menuOpen ? <IconClose size={20} /> : <IconMenu size={20} />}
         </button>
@@ -45,7 +45,7 @@ export default function MobileHeader() {
         <nav
           id="mobile-nav"
           aria-label="Dashboard sections"
-          className="border-t border-hairline bg-surface px-4 py-3 sm:px-5"
+          className="border-t border-hairline bg-surface px-4 pb-4 pt-3 sm:px-5"
         >
           <ul className="space-y-1">
             {NAV_ITEMS.map(({ label, targetId, Icon }) => {
@@ -57,10 +57,10 @@ export default function MobileHeader() {
                     href={`#${targetId}`}
                     aria-current={isActive ? "location" : undefined}
                     onClick={() => setMenuOpen(false)}
-                    className={`flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-medium transition-colors duration-150 ${
+                    className={`flex min-h-11 w-full items-center gap-3 rounded-xl border px-3 text-left text-sm transition-colors duration-150 ${
                       isActive
-                        ? "bg-brand-soft text-brand"
-                        : "text-ink-2 hover:bg-surface-2 hover:text-ink"
+                        ? "border-brand-line bg-brand-soft font-medium text-brand"
+                        : "border-transparent font-normal text-ink-2 hover:bg-surface-2 hover:text-ink"
                     }`}
                   >
                     <Icon size={17} className="shrink-0" />
@@ -71,7 +71,7 @@ export default function MobileHeader() {
             })}
           </ul>
 
-          <div className="mt-3 flex items-center gap-2.5 rounded-lg border border-hairline bg-surface-2 px-3 py-2.5">
+          <div className="mt-3 flex items-center gap-2.5 rounded-xl border border-hairline bg-inset px-3 py-2.5">
             <span
               aria-hidden="true"
               className="h-1.5 w-1.5 shrink-0 rounded-full bg-positive"

@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/States";
 import { IconAnalytics } from "@/components/ui/Icons";
 
-const LINE = "#047857";
+const LINE = "#e0a8d2";
 const CHART_HEIGHT = "h-[17.5rem]";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -90,8 +90,8 @@ export default function MonthlySpendingChart() {
         label="Loading monthly spending"
         className={`${CHART_HEIGHT} w-full`}
       >
-        <div className="flex h-full flex-col justify-end gap-3 rounded-lg bg-surface-2 p-5">
-          <Skeleton className="h-3 w-28 bg-surface-3" />
+        <div className="flex h-full flex-col justify-end gap-3 rounded-xl bg-inset p-5">
+          <Skeleton className="h-3 w-28" />
           <Skeleton className="h-full w-full rounded-md" />
         </div>
       </LoadingRegion>
@@ -150,7 +150,7 @@ export default function MonthlySpendingChart() {
                 x2="0"
                 y2="1"
               >
-                <stop offset="0%" stopColor={LINE} stopOpacity={0.16} />
+                <stop offset="0%" stopColor={LINE} stopOpacity={0.28} />
                 <stop offset="100%" stopColor={LINE} stopOpacity={0} />
               </linearGradient>
             </defs>
@@ -158,7 +158,7 @@ export default function MonthlySpendingChart() {
             <CartesianGrid
               strokeDasharray="4 4"
               vertical={false}
-              stroke="#e3e8ef"
+              stroke="#262029"
             />
 
             <XAxis
@@ -186,7 +186,7 @@ export default function MonthlySpendingChart() {
             />
 
             <Tooltip
-              cursor={{ stroke: "#cbd5e1", strokeWidth: 1 }}
+              cursor={{ stroke: "#4a4151", strokeWidth: 1, strokeDasharray: "4 4" }}
               formatter={(value) => [
                 currencyFormatter.format(Number(value)),
                 "Spending",
@@ -206,30 +206,31 @@ export default function MonthlySpendingChart() {
               }}
               contentStyle={{
                 borderRadius: "0.5rem",
-                border: "1px solid #e3e8ef",
-                boxShadow: "0 12px 20px -6px rgb(15 23 42 / 0.12)",
+                border: "1px solid #372f3c",
+                background: "#1e1a23",
+                boxShadow: "0 16px 32px -8px rgb(0 0 0 / 0.7)",
                 padding: "0.5rem 0.75rem",
                 fontSize: "0.8125rem",
               }}
               labelStyle={{
-                color: "#475569",
+                color: "#918899",
                 fontWeight: 500,
                 marginBottom: "0.25rem",
               }}
-              itemStyle={{ color: "#0f172a", fontWeight: 600 }}
+              itemStyle={{ color: "#f4f1f7", fontWeight: 600 }}
             />
 
             <Area
               type="monotone"
               dataKey="total_spending"
               stroke={LINE}
-              strokeWidth={2}
+              strokeWidth={2.5}
               fill="url(#spendingGradient)"
               isAnimationActive={!reducedMotion}
               activeDot={{
-                r: 4,
+                r: 5,
                 strokeWidth: 2,
-                stroke: "#ffffff",
+                stroke: "#17141b",
                 fill: LINE,
               }}
             />

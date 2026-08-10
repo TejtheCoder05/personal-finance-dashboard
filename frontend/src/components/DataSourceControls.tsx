@@ -31,7 +31,7 @@ const emptyMapping: CsvColumnMapping = {
 };
 
 const selectClass =
-  "mt-1.5 h-10 w-full rounded-lg border border-hairline bg-surface px-3 text-sm text-ink outline-none transition-colors duration-150 hover:border-hairline-strong focus:border-brand focus:ring-2 focus:ring-brand-line";
+  "mt-1.5 h-11 w-full rounded-xl border border-hairline bg-inset px-3.5 text-sm text-ink outline-none transition-colors duration-150 hover:border-hairline-strong focus:border-brand focus:ring-2 focus:ring-brand-line";
 
 export default function DataSourceControls() {
   const { user } = useAuth();
@@ -219,7 +219,7 @@ export default function DataSourceControls() {
 
           <label
             htmlFor="transaction-csv"
-            className="inline-flex h-10 max-w-full cursor-pointer items-center gap-2 rounded-lg border border-dashed border-hairline-strong bg-surface-2 px-3.5 text-sm font-medium text-ink-2 transition-colors duration-150 hover:border-brand hover:bg-brand-soft hover:text-brand peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus"
+            className="inline-flex h-10 max-w-full cursor-pointer items-center gap-2 rounded-full border border-dashed border-hairline-strong bg-inset px-4 text-sm font-medium text-ink-2 transition-colors duration-150 hover:border-brand hover:bg-brand-soft hover:text-brand peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus"
           >
             <IconUpload size={16} className="shrink-0" />
             <span className="truncate">
@@ -231,7 +231,7 @@ export default function DataSourceControls() {
             <button
               type="submit"
               disabled={working}
-              className="inline-flex h-10 items-center rounded-lg bg-ink px-4 text-sm font-semibold text-white transition-colors duration-150 hover:bg-nav-2 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex h-10 items-center rounded-full bg-brand px-5 text-sm font-semibold text-brand-ink transition-colors duration-150 hover:bg-brand-strong disabled:cursor-not-allowed disabled:opacity-60"
             >
               {working
                 ? inspection ? "Processing…" : "Validating…"
@@ -243,10 +243,10 @@ export default function DataSourceControls() {
                 type="button"
                 onClick={removeUpload}
                 disabled={removing}
-                className={`inline-flex h-10 items-center rounded-lg border px-4 text-sm font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60 ${
+                className={`inline-flex h-10 items-center rounded-full border px-4 text-sm font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60 ${
                   persisted
-                    ? "border-critical-line bg-surface text-critical hover:bg-critical-soft"
-                    : "border-hairline bg-surface text-ink-2 hover:border-hairline-strong hover:bg-surface-2"
+                    ? "border-critical-line bg-inset text-critical hover:bg-critical-soft"
+                    : "border-hairline bg-inset text-ink-2 hover:border-hairline-strong hover:text-ink"
                 }`}
               >
                 {removing
@@ -317,7 +317,7 @@ export default function DataSourceControls() {
           </div>
 
           {inspection.warnings.length > 0 && (
-            <div className="mt-4 flex items-start gap-2.5 rounded-lg border border-caution-line bg-caution-soft px-3.5 py-3">
+            <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-caution-line bg-caution-soft px-3.5 py-3">
               <IconAlert size={16} className="mt-px shrink-0 text-caution" />
               <div>
                 {inspection.warnings.map((warning) => (
@@ -329,12 +329,12 @@ export default function DataSourceControls() {
             </div>
           )}
 
-          <div className="mt-4 overflow-x-auto rounded-lg border border-hairline">
+          <div className="mt-4 overflow-x-auto rounded-xl border border-hairline">
             <table className="w-full min-w-[37.5rem] text-left text-xs">
               <caption className="sr-only">
                 Preview of the first rows of the uploaded CSV
               </caption>
-              <thead className="bg-surface-2">
+              <thead className="bg-inset">
                 <tr>
                   {inspection.columns.map((column) => (
                     <th

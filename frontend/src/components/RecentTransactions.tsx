@@ -30,7 +30,7 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 });
 
 const controlClass =
-  "h-9 rounded-lg border border-hairline bg-surface px-3 text-sm text-ink-2 outline-none transition-colors duration-150 hover:border-hairline-strong focus:border-brand focus:ring-2 focus:ring-brand-line";
+  "h-9 rounded-full border border-hairline bg-inset px-4 text-sm text-ink-2 outline-none transition-colors duration-150 hover:border-hairline-strong hover:text-ink focus:border-brand focus:ring-2 focus:ring-brand-line";
 
 const GUTTER = "px-5 sm:px-6";
 
@@ -59,7 +59,7 @@ function ConfidenceBar({ value }: { value: number }) {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-surface-3">
+      <div className="h-1 w-16 overflow-hidden rounded-full bg-surface-3">
         <div
           className="h-full rounded-full bg-brand"
           style={{ width: `${percent}%` }}
@@ -83,12 +83,12 @@ function MerchantAvatar({
   return (
     <span
       aria-hidden="true"
-      className={`flex shrink-0 items-center justify-center rounded-md border text-xs font-semibold ${
+      className={`flex shrink-0 items-center justify-center rounded-lg border text-xs font-semibold ${
         size === "md" ? "h-9 w-9" : "h-8 w-8"
       } ${
         isAnomaly
           ? "border-caution-line bg-caution-soft text-caution"
-          : "border-hairline bg-surface-2 text-ink-2"
+          : "border-hairline bg-inset text-ink-2"
       }`}
     >
       {merchant.charAt(0).toUpperCase()}
@@ -182,10 +182,10 @@ export default function RecentTransactions() {
             type="button"
             aria-pressed={anomaliesOnly}
             onClick={() => setAnomaliesOnly((current) => !current)}
-            className={`col-span-2 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border px-3 text-sm font-medium transition-colors duration-150 sm:w-auto ${
+            className={`col-span-2 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-full border px-4 text-sm font-medium transition-colors duration-150 sm:w-auto ${
               anomaliesOnly
                 ? "border-caution-line bg-caution-soft text-caution"
-                : "border-hairline bg-surface text-ink-2 hover:border-hairline-strong hover:bg-surface-2"
+                : "border-hairline bg-inset text-ink-2 hover:border-hairline-strong hover:text-ink"
             }`}
           >
             {anomaliesOnly ? <IconCheck size={14} /> : <IconAlert size={14} />}
@@ -204,7 +204,7 @@ export default function RecentTransactions() {
               key={index}
               className="flex items-center gap-3 border-t border-hairline py-4"
             >
-              <Skeleton className="h-9 w-9 rounded-md" />
+              <Skeleton className="h-9 w-9 rounded-lg" />
 
               <div className="flex-1">
                 <Skeleton className="h-4 w-40" />
@@ -233,10 +233,10 @@ export default function RecentTransactions() {
             {transactions.map((transaction, index) => (
               <li
                 key={`${transaction.date}-${transaction.merchant}-${transaction.amount}-${index}`}
-                className={`rounded-lg border p-4 ${
+                className={`rounded-xl border p-4 ${
                   transaction.is_anomaly
-                    ? "border-caution-line bg-caution-soft"
-                    : "border-hairline bg-surface"
+                    ? "border-caution-line bg-caution-soft/60"
+                    : "border-hairline bg-inset"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
@@ -312,7 +312,7 @@ export default function RecentTransactions() {
               </caption>
 
               <thead>
-                <tr className="border-y border-hairline bg-surface-2">
+                <tr className="border-y border-hairline bg-inset">
                   <th
                     scope="col"
                     className="py-2.5 pl-5 pr-4 text-xs font-semibold uppercase tracking-[0.06em] text-ink-3 sm:pl-6"
@@ -355,7 +355,7 @@ export default function RecentTransactions() {
                   <tr
                     key={`${transaction.date}-${transaction.merchant}-${transaction.amount}-${index}`}
                     className={`border-b border-hairline transition-colors duration-150 hover:bg-surface-2 ${
-                      transaction.is_anomaly ? "bg-caution-soft" : "bg-surface"
+                      transaction.is_anomaly ? "bg-caution-soft/60" : ""
                     }`}
                   >
                     <td className="py-3 pl-5 pr-4 sm:pl-6">
